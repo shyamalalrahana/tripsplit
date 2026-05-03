@@ -1,18 +1,44 @@
 # TripSplit
 
-TripSplit is a lightweight trip money manager for groups. It lets friends create a trip, add members, record shared expenses, calculate balances, and see the simplest settlement instructions.
+TripSplit is a mobile-first trip money manager built with Next.js, Supabase, and Vercel. Users can log in, create trip groups, invite friends, add shared expenses, calculate balances, and settle with UPI QR payment links.
 
-## Run Locally
+## Stack
 
-Open `index.html` in a browser, or serve the folder with any static web server.
+- Next.js
+- Supabase Auth
+- Supabase PostgreSQL
+- Vercel
+- UPI payment links and QR codes
 
-## Deploy With GitHub Pages
+## Setup
 
-This app is static, so GitHub Pages can publish it directly from the repository root.
+1. Create a Supabase project.
+2. Run `supabase/schema.sql` in the Supabase SQL editor.
+3. Copy `.env.example` to `.env.local`.
+4. Add:
 
-1. Push this folder to a GitHub repository.
-2. Open the repository on GitHub.
-3. Go to `Settings` -> `Pages`.
-4. Under `Build and deployment`, choose `Deploy from a branch`.
-5. Select branch `main` and folder `/ (root)`.
-6. Save. GitHub will publish the app at the Pages URL shown there.
+```bash
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+NEXT_PUBLIC_APP_URL=https://tripsplit-tan.vercel.app
+```
+
+5. Install dependencies:
+
+```bash
+npm install
+```
+
+6. Run locally:
+
+```bash
+npm run dev
+```
+
+## Vercel Deployment
+
+Add the same environment variables in Vercel Project Settings, then deploy from GitHub.
+
+## MVP Payment Note
+
+UPI QR codes help users pay with Google Pay, PhonePe, Paytm, BHIM, or any UPI app. TripSplit does not automatically verify bank/payment completion yet. Sender and receiver confirmation are manual for this MVP.
