@@ -106,23 +106,19 @@ export function TripDashboardPage({ tripId }: { tripId: string }) {
 
       <section className="stats">
         <div className="card stat">
-          <span className="statIcon blue"><WalletCards size={18} /></span>
-          <span className="muted">Total expense</span>
+          <span className="statHeader"><span className="muted">Total expense</span><span className="statIcon blue"><WalletCards size={18} /></span></span>
           <b>{formatMoney(total, bundle.trip.currency)}</b>
         </div>
         <div className="card stat">
-          <span className="statIcon violet"><Users size={18} /></span>
-          <span className="muted">Members</span>
+          <span className="statHeader"><span className="muted">Members</span><span className="statIcon violet"><Users size={18} /></span></span>
           <b>{bundle.members.length}</b>
         </div>
         <div className="card stat">
-          <span className="statIcon green"><TrendingUp size={18} /></span>
-          <span className="muted">Should receive</span>
+          <span className="statHeader"><span className="muted">Should receive</span><span className="statIcon green"><TrendingUp size={18} /></span></span>
           <b>{receivers.length}</b>
         </div>
         <div className="card stat">
-          <span className="statIcon orange"><TrendingDown size={18} /></span>
-          <span className="muted">Need to pay</span>
+          <span className="statHeader"><span className="muted">Need to pay</span><span className="statIcon orange"><TrendingDown size={18} /></span></span>
           <b>{payers.length}</b>
         </div>
       </section>

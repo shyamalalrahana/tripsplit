@@ -217,13 +217,24 @@ h3 {
   font-size: 28px;
 }
 
+.statHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.statHeader .muted {
+  min-width: 0;
+}
+
 .statIcon {
   display: inline-grid;
-  width: 36px;
-  height: 36px;
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
   place-items: center;
   border-radius: 13px;
-  margin-bottom: 12px;
 }
 
 .statIcon.blue {
