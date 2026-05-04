@@ -884,17 +884,19 @@ textarea:focus {
 
 /* Mobile prototype inspired visual system */
 .topbar {
-  background: #0f0f13;
-  border-bottom: 0;
-  box-shadow: none;
+  background:
+    radial-gradient(circle at 12% 0%, rgba(255, 255, 255, 0.55), transparent 28%),
+    linear-gradient(135deg, #eef2ff 0%, #f5f3ff 46%, #ecfeff 100%);
+  border-bottom: 1px solid rgba(108, 99, 255, 0.14);
+  box-shadow: 0 10px 28px rgba(108, 99, 255, 0.08);
 }
 
 .brandTitle {
-  color: #ffffff;
+  color: #18181b;
 }
 
 .brandSub {
-  color: rgba(255, 255, 255, 0.58);
+  color: #667085;
 }
 
 .brandMark {
@@ -904,14 +906,14 @@ textarea:focus {
 }
 
 .profileButton {
-  border: 0;
-  background: rgba(255, 255, 255, 0.1);
-  box-shadow: none;
-  color: #ffffff;
+  border: 1px solid rgba(108, 99, 255, 0.18);
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: 0 10px 24px rgba(108, 99, 255, 0.08);
+  color: #18181b;
 }
 
 .profileButtonText small {
-  color: rgba(255, 255, 255, 0.55);
+  color: #777d8f;
 }
 
 .page {
@@ -921,9 +923,11 @@ textarea:focus {
 .cardSoft {
   border: 0;
   border-radius: 0 0 28px 28px;
-  background: #0f0f13;
+  background:
+    radial-gradient(circle at 90% 10%, rgba(20, 184, 166, 0.2), transparent 28%),
+    linear-gradient(135deg, #6c63ff 0%, #8b5cf6 52%, #38bdf8 125%);
   color: #ffffff;
-  box-shadow: none;
+  box-shadow: 0 18px 40px rgba(108, 99, 255, 0.22);
   margin: -18px calc((100% - 100vw) / 2) 4px;
   padding: 22px max(18px, calc((100vw - 1180px) / 2)) 28px;
 }
@@ -977,7 +981,7 @@ textarea:focus {
 }
 
 .button {
-  background: #0f0f13;
+  background: linear-gradient(135deg, #6c63ff, #8b5cf6);
 }
 
 .buttonSecondary {
@@ -1066,7 +1070,7 @@ textarea:focus {
 }
 
 .expenseBarFill.tone4 {
-  background: linear-gradient(90deg, #0f0f13, #6c63ff);
+  background: linear-gradient(90deg, #38bdf8, #6c63ff);
 }
 
 .expenseBarFill.tone5 {
