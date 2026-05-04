@@ -1559,6 +1559,10 @@ textarea:focus {
 }
 
 @media (max-width: 840px) {
+  body {
+    font-size: 14px;
+  }
+
   .topbar {
     border-radius: 0 0 24px 24px;
     padding: 14px 16px 18px;
@@ -1570,13 +1574,35 @@ textarea:focus {
   }
 
   .page > *:not(.cardSoft) {
-    margin-right: 16px;
-    margin-left: 16px;
+    margin-right: 14px;
+    margin-left: 14px;
   }
 
   .cardSoft {
     margin: -14px 0 14px;
     padding: 16px 18px 20px;
+  }
+
+  .cardSoft h1 {
+    margin-bottom: 8px;
+    font-size: 30px;
+    line-height: 1;
+  }
+
+  .cardSoft .muted {
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  .tripHeroActions {
+    gap: 8px;
+  }
+
+  .tripHeroActions .button,
+  .tripHeroActions .buttonSecondary {
+    min-height: 40px;
+    padding: 8px 12px;
+    font-size: 14px;
   }
 
   .stats,
@@ -1589,8 +1615,10 @@ textarea:focus {
   }
 
   .stat {
-    min-height: 96px;
-    padding: 14px;
+    min-height: 84px;
+    border: 0.5px solid rgba(15, 23, 42, 0.08);
+    border-radius: 15px;
+    padding: 11px;
   }
 
   .statHeader {
@@ -1598,31 +1626,118 @@ textarea:focus {
   }
 
   .statHeader .muted {
-    font-size: 14px;
+    font-size: 12px;
+    font-weight: 800;
     line-height: 1.15;
   }
 
   .statIcon {
-    width: 30px;
-    height: 30px;
-    border-radius: 11px;
+    width: 26px;
+    height: 26px;
+    border-radius: 9px;
   }
 
   .statIcon svg {
-    width: 16px;
-    height: 16px;
+    width: 14px;
+    height: 14px;
   }
 
   .stat b {
-    margin-top: 12px;
-    font-size: 28px;
-    line-height: 0.95;
+    margin-top: 10px;
+    font-size: 23px;
+    line-height: 1;
   }
 
   .card,
   .profileCard,
   .memberCard,
   .splitPanel {
+    border: 0.5px solid rgba(15, 23, 42, 0.08);
+    border-radius: 14px;
+    padding: 14px;
+  }
+
+  .recentExpensesCard,
+  .expenseInsightCard {
+    background: #ffffff;
+  }
+
+  .recentExpensesHeader {
+    margin-bottom: 12px;
+  }
+
+  .recentExpensesHeader h2 {
+    font-size: 19px;
+  }
+
+  .recentExpensesHeader a {
+    font-size: 14px;
+  }
+
+  .simpleExpenseGraph {
+    gap: 12px;
+  }
+
+  .simpleGraphTotal {
+    gap: 5px;
+    padding-bottom: 10px;
+  }
+
+  .simpleGraphTotal b {
+    font-size: 22px;
+  }
+
+  .simpleGraphRows {
+    gap: 11px;
+  }
+
+  .simpleGraphMeta span,
+  .simpleGraphMeta b {
+    font-size: 13px;
+  }
+
+  .simpleGraphTrack {
+    height: 6px;
+  }
+
+  .recentExpenseRows {
+    gap: 10px;
+  }
+
+  .recentExpenseRow {
+    grid-template-columns: 44px minmax(0, 1fr) auto;
+    gap: 10px;
+    min-height: 76px;
+    border: 0.5px solid rgba(15, 23, 42, 0.08);
     border-radius: 16px;
+    padding: 10px;
+  }
+
+  .expenseCategoryImage {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    font-size: 21px;
+  }
+
+  .recentExpenseCopy strong {
+    font-size: 15px;
+    line-height: 1.1;
+  }
+
+  .recentExpenseCopy small {
+    font-size: 11px;
+  }
+
+  .recentExpenseMoney {
+    min-width: 72px;
+  }
+
+  .recentExpenseMoney b {
+    font-size: 15px;
+  }
+
+  .recentExpenseMoney small {
+    font-size: 10px;
   }
 }
