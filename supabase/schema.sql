@@ -157,39 +157,100 @@ create policy "members update own or admin" on public.trip_members
 
 drop policy if exists "expenses select trip members" on public.expenses;
 create policy "expenses select trip members" on public.expenses
-  for select using (public.is_trip_member(trip_id));
+  for select using (
+    public.is_trip_member(trip_id)
+    or exists (select 1 from public.trips t where t.id = trip_id and t.invite_code is not null)
+  );
 
 drop policy if exists "expenses insert trip members" on public.expenses;
 create policy "expenses insert trip members" on public.expenses
-  for insert with check (public.is_trip_member(trip_id));
+  for insert with check (
+    public.is_trip_member(trip_id)
+    or exists (select 1 from public.trips t where t.id = trip_id and t.invite_code is not null)
+  );
 
 drop policy if exists "expenses update creator or admin" on public.expenses;
 create policy "expenses update creator or admin" on public.expenses
   for update using (
     public.is_trip_admin(trip_id)
     or exists (select 1 from public.profiles p where p.id = created_by and p.user_id = auth.uid())
+    or exists (select 1 from public.trips t where t.id = trip_id and t.invite_code is not null)
   );
 
 drop policy if exists "expenses delete admin" on public.expenses;
 create policy "expenses delete admin" on public.expenses
-  for delete using (public.is_trip_admin(trip_id));
+  for delete using (
+    public.is_trip_admin(trip_id)
+    or exists (select 1 from public.trips t where t.id = trip_id and t.invite_code is not null)
+  );
 
 drop policy if exists "splits select trip members" on public.expense_splits;
 create policy "splits select trip members" on public.expense_splits
-  for select using (exists (select 1 from public.expenses e where e.id = expense_id and public.is_trip_member(e.trip_id)));
+  for select using (
+    exists (
+      select 1 from public.expenses e
+      join public.trips t on t.id = e.trip_id
+      where e.id = expense_id and (public.is_trip_member(e.trip_id) or t.invite_code is not null)
+    )
+  );
 
 drop policy if exists "splits insert trip members" on public.expense_splits;
 create policy "splits insert trip members" on public.expense_splits
-  for insert with check (exists (select 1 from public.expenses e where e.id = expense_id and public.is_trip_member(e.trip_id)));
+  for insert with check (
+    exists (
+      select 1 from public.expenses e
+      join public.trips t on t.id = e.trip_id
+      where e.id = expense_id and (public.is_trip_member(e.trip_id) or t.invite_code is not null)
+    )
+  );
+
+drop policy if exists "splits update trip members" on public.expense_splits;
+create policy "splits update trip members" on public.expense_splits
+  for update using (
+    exists (
+      select 1 from public.expenses e
+      join public.trips t on t.id = e.trip_id
+      where e.id = expense_id and (public.is_trip_member(e.trip_id) or t.invite_code is not null)
+    )
+  );
+
+drop policy if exists "splits delete trip members" on public.expense_splits;
+create policy "splits delete trip members" on public.expense_splits
+  for delete using (
+    exists (
+      select 1 from public.expenses e
+      join public.trips t on t.id = e.trip_id
+      where e.id = expense_id and (public.is_trip_member(e.trip_id) or t.invite_code is not null)
+    )
+  );
 
 drop policy if exists "settlements select trip members" on public.settlements;
 create policy "settlements select trip members" on public.settlements
-  for select using (public.is_trip_member(trip_id));
+  for select using (
+    public.is_trip_member(trip_id)
+    or exists (select 1 from public.trips t where t.id = trip_id and t.invite_code is not null)
+  );
 
 drop policy if exists "settlements insert trip members" on public.settlements;
 create policy "settlements insert trip members" on public.settlements
-  for insert with check (public.is_trip_member(trip_id));
+  for insert with check (
+    public.is_trip_member(trip_id)
+    or exists (select 1 from public.trips t where t.id = trip_id and t.invite_code is not null)
+  );
 
 drop policy if exists "settlements update trip members" on public.settlements;
 create policy "settlements update trip members" on public.settlements
-  for update using (public.is_trip_member(trip_id)) with check (public.is_trip_member(trip_id));
+  for update using (
+    public.is_trip_member(trip_id)
+    or exists (select 1 from public.trips t where t.id = trip_id and t.invite_code is not null)
+  ) with check (
+    public.is_trip_member(trip_id)
+    or exists (select 1 from public.trips t where t.id = trip_id and t.invite_code is not null)
+  );
+
+drop policy if exists "settlements delete trip members" on public.settlements;
+create policy "settlements delete trip members" on public.settlements
+  for delete using (
+    public.is_trip_member(trip_id)
+    or exists (select 1 from public.trips t where t.id = trip_id and t.invite_code is not null)
+  );

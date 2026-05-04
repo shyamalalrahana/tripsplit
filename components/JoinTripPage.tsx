@@ -11,6 +11,7 @@ export function JoinTripPage({ inviteCode }: { inviteCode: string }) {
   const [trip, setTrip] = useState<Trip | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [message, setMessage] = useState("");
+  const [joining, setJoining] = useState(false);
 
   useEffect(() => {
     load();
@@ -28,12 +29,52 @@ export function JoinTripPage({ inviteCode }: { inviteCode: string }) {
 
   async function join(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (joining) return;
     if (!trip) return;
+    setJoining(true);
+    setMessage("");
     const form = new FormData(event.currentTarget);
     const name = String(form.get("name") || profile?.name || "").trim();
     if (!name) {
       setMessage("Enter your name to join.");
+      setJoining(false);
       return;
+    }
+    const guestStorageKey = `tripsplit-member-${trip.id}`;
+    const savedGuestMemberId = typeof window !== "undefined" ? window.localStorage.getItem(guestStorageKey) : "";
+    if (profile) {
+      const { data: existing } = await supabase
+        .from("trip_members")
+        .select("*")
+        .eq("trip_id", trip.id)
+        .eq("profile_id", profile.id)
+        .maybeSingle();
+      if (existing) {
+        await supabase.from("trip_members").update({
+          name,
+          phone: String(form.get("phone") || profile.phone || ""),
+          upi_id: String(form.get("upi_id") || profile.upi_id || ""),
+          avatar_color: String(form.get("avatar_color") || profile.avatar_color || "#2563eb")
+        }).eq("id", existing.id);
+        router.push(`/trips/${existing.trip_id}`);
+        return;
+      }
+    } else if (savedGuestMemberId) {
+      const { data: existingGuest } = await supabase
+        .from("trip_members")
+        .select("*")
+        .eq("id", savedGuestMemberId)
+        .maybeSingle();
+      if (existingGuest) {
+        await supabase.from("trip_members").update({
+          name,
+          phone: String(form.get("phone") || ""),
+          upi_id: String(form.get("upi_id") || ""),
+          avatar_color: String(form.get("avatar_color") || "#2563eb")
+        }).eq("id", existingGuest.id);
+        router.push(`/trips/${existingGuest.trip_id}`);
+        return;
+      }
     }
     const { data, error } = await supabase.from("trip_members").insert({
       trip_id: trip.id,
@@ -46,7 +87,11 @@ export function JoinTripPage({ inviteCode }: { inviteCode: string }) {
     }).select("*").single();
     if (error) {
       setMessage(error.message);
+      setJoining(false);
       return;
+    }
+    if (!profile && data?.id && typeof window !== "undefined") {
+      window.localStorage.setItem(guestStorageKey, data.id);
     }
     router.push(`/trips/${data.trip_id}`);
   }
@@ -67,7 +112,7 @@ export function JoinTripPage({ inviteCode }: { inviteCode: string }) {
           <div className="field"><label>UPI ID optional</label><input name="upi_id" defaultValue={profile?.upi_id || ""} placeholder="aju@okaxis" /></div>
           <div className="field"><label>Avatar color</label><input name="avatar_color" defaultValue={profile?.avatar_color || "#2563eb"} /></div>
           {message ? <p className="muted">{message}</p> : null}
-          <button className="button" type="submit">Join trip</button>
+          <button className="button" disabled={joining} type="submit">{joining ? "Joining..." : "Join trip"}</button>
         </form>
       </section>
     </main>

@@ -17,6 +17,7 @@ export function AddExpensePage({ tripId }: { tripId: string }) {
   const [selected, setSelected] = useState<string[]>([]);
   const [customValues, setCustomValues] = useState<Record<string, number>>({});
   const [message, setMessage] = useState("");
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     load();
@@ -38,6 +39,9 @@ export function AddExpensePage({ tripId }: { tripId: string }) {
 
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (saving) return;
+    setSaving(true);
+    setMessage("");
     if (!trip) return;
     const form = new FormData(event.currentTarget);
     const amount = Number(form.get("amount") || 0);
@@ -45,6 +49,7 @@ export function AddExpensePage({ tripId }: { tripId: string }) {
     const validation = validateSplits(amount, splitType, splits);
     if (validation) {
       setMessage(validation);
+      setSaving(false);
       return;
     }
     const { data: auth } = await supabase.auth.getUser();
@@ -62,9 +67,15 @@ export function AddExpensePage({ tripId }: { tripId: string }) {
     }).select("*").single();
     if (error || !expense) {
       setMessage(error?.message || "Could not save expense.");
+      setSaving(false);
       return;
     }
-    await supabase.from("expense_splits").insert(splits.map((split) => ({ ...split, expense_id: expense.id })));
+    const splitResult = await supabase.from("expense_splits").insert(splits.map((split) => ({ ...split, expense_id: expense.id })));
+    if (splitResult.error) {
+      setMessage(splitResult.error.message);
+      setSaving(false);
+      return;
+    }
     await supabase.from("settlements").delete().eq("trip_id", tripId);
     router.push(`/trips/${tripId}`);
   }
@@ -113,7 +124,7 @@ export function AddExpensePage({ tripId }: { tripId: string }) {
         <div className="field"><label>Notes optional</label><textarea name="notes" placeholder="Rahul paid for Petrol" /></div>
         <div className="field"><label>Receipt image URL optional</label><input name="receipt_url" /></div>
         {message ? <p className="badge pending">{message}</p> : null}
-        <button className="button" type="submit">Save expense</button>
+        <button className="button" disabled={saving} type="submit">{saving ? "Saving..." : "Save expense"}</button>
       </form>
     </AppShell>
   );

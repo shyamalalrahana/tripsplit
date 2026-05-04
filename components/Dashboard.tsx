@@ -30,7 +30,7 @@ export function Dashboard() {
         name: auth.user.user_metadata?.name || auth.user.email?.split("@")[0] || "TripSplit user",
         avatar_color: "#2563eb"
       };
-      const inserted = await supabase.from("profiles").insert(fallback).select("*").single();
+      const inserted = await supabase.from("profiles").upsert(fallback, { onConflict: "user_id" }).select("*").single();
       profileData = inserted.data;
     }
     setProfile(profileData);

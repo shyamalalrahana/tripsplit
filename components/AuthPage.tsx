@@ -15,6 +15,7 @@ export function AuthPage() {
 
   async function submit(event: React.FormEvent) {
     event.preventDefault();
+    if (loading) return;
     setLoading(true);
     setMessage("");
     const result =
@@ -34,7 +35,7 @@ export function AuthPage() {
         email,
         name: name || email.split("@")[0],
         avatar_color: "#2563eb"
-      });
+      }, { onConflict: "user_id" });
     }
     router.push("/");
     router.refresh();

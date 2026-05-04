@@ -1,17 +1,22 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { supabase } from "@/lib/supabase";
 
 export function CreateTripPage() {
   const router = useRouter();
+  const [saving, setSaving] = useState(false);
 
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (saving) return;
+    setSaving(true);
     const form = new FormData(event.currentTarget);
     const { data: auth } = await supabase.auth.getUser();
     if (!auth.user) {
+      setSaving(false);
       router.push("/login");
       return;
     }
@@ -33,6 +38,7 @@ export function CreateTripPage() {
       .single();
     if (error || !trip) {
       alert(error?.message || "Could not create trip");
+      setSaving(false);
       return;
     }
     await supabase.from("trip_members").insert({
@@ -63,7 +69,7 @@ export function CreateTripPage() {
           <div className="field"><label>Currency</label><select name="currency" defaultValue="INR"><option>INR</option><option>USD</option><option>EUR</option><option>AED</option></select></div>
           <div className="field"><label>Trip image URL optional</label><input name="trip_image_url" /></div>
         </div>
-        <button className="button" type="submit">Create trip</button>
+        <button className="button" disabled={saving} type="submit">{saving ? "Creating..." : "Create trip"}</button>
       </form>
     </AppShell>
   );
