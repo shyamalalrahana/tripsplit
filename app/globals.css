@@ -217,6 +217,35 @@ h3 {
   font-size: 28px;
 }
 
+.statIcon {
+  display: inline-grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border-radius: 13px;
+  margin-bottom: 12px;
+}
+
+.statIcon.blue {
+  background: #e8f0ff;
+  color: #2563eb;
+}
+
+.statIcon.violet {
+  background: #eee7ff;
+  color: #6c63ff;
+}
+
+.statIcon.green {
+  background: #e7f8ef;
+  color: #16a34a;
+}
+
+.statIcon.orange {
+  background: #fff0dc;
+  color: #f97316;
+}
+
 .row {
   display: flex;
   align-items: center;

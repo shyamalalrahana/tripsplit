@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Copy, Plus, Share2 } from "lucide-react";
+import { Copy, Plus, Share2, TrendingDown, TrendingUp, Users, WalletCards } from "lucide-react";
 import { useEffect, useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { calculateBalances, calculateSettlementDrafts, formatMoney } from "@/lib/calculations";
@@ -105,10 +105,26 @@ export function TripDashboardPage({ tripId }: { tripId: string }) {
       {message ? <p className="badge paid">{message}</p> : null}
 
       <section className="stats">
-        <div className="card stat"><span className="muted">Total expense</span><b>{formatMoney(total, bundle.trip.currency)}</b></div>
-        <div className="card stat"><span className="muted">Members</span><b>{bundle.members.length}</b></div>
-        <div className="card stat"><span className="muted">Should receive</span><b>{receivers.length}</b></div>
-        <div className="card stat"><span className="muted">Need to pay</span><b>{payers.length}</b></div>
+        <div className="card stat">
+          <span className="statIcon blue"><WalletCards size={18} /></span>
+          <span className="muted">Total expense</span>
+          <b>{formatMoney(total, bundle.trip.currency)}</b>
+        </div>
+        <div className="card stat">
+          <span className="statIcon violet"><Users size={18} /></span>
+          <span className="muted">Members</span>
+          <b>{bundle.members.length}</b>
+        </div>
+        <div className="card stat">
+          <span className="statIcon green"><TrendingUp size={18} /></span>
+          <span className="muted">Should receive</span>
+          <b>{receivers.length}</b>
+        </div>
+        <div className="card stat">
+          <span className="statIcon orange"><TrendingDown size={18} /></span>
+          <span className="muted">Need to pay</span>
+          <b>{payers.length}</b>
+        </div>
       </section>
 
       <section className="twoCol" style={{ marginTop: 16 }}>
