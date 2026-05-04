@@ -2,8 +2,11 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { LogOut, Plus, ReceiptText, Scale, Users, WalletCards } from "lucide-react";
+import { useEffect, useState } from "react";
+import { LogOut, Plus, ReceiptText, Scale, UserRound, Users, WalletCards } from "lucide-react";
+import { AvatarView } from "@/components/AvatarView";
 import { supabase } from "@/lib/supabase";
+import type { Profile } from "@/lib/types";
 
 export function AppShell({
   children,
@@ -13,6 +16,19 @@ export function AppShell({
   tripId?: string;
 }) {
   const router = useRouter();
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    loadProfile();
+  }, []);
+
+  async function loadProfile() {
+    const { data: auth } = await supabase.auth.getUser();
+    if (!auth.user) return;
+    const { data } = await supabase.from("profiles").select("*").eq("user_id", auth.user.id).maybeSingle();
+    setProfile(data);
+  }
 
   async function logout() {
     await supabase.auth.signOut();
@@ -39,11 +55,26 @@ export function AppShell({
             <span className="brandSub">Trip Money Manager</span>
           </span>
         </Link>
-        <div className="cluster">
-          <Link className="buttonSecondary" href="/profile">Profile</Link>
-          <button className="buttonSecondary" onClick={logout} type="button">
-            <LogOut size={16} /> Logout
+        <div className="profileMenu">
+          <button className="profileButton" onClick={() => setMenuOpen((open) => !open)} type="button" aria-expanded={menuOpen} aria-label="Open profile menu">
+            <AvatarView className="profileButtonAvatar" name={profile?.name || "User"} color={profile?.avatar_color} image={profile?.avatar_url} />
+            <span className="profileButtonText">
+              <strong>{profile?.name || "Profile"}</strong>
+              <small>Account</small>
+            </span>
           </button>
+          {menuOpen ? (
+            <div className="profileDropdown">
+              <Link className="profileDropdownItem" href="/profile" onClick={() => setMenuOpen(false)}>
+                <UserRound size={17} />
+                <span>Profile</span>
+              </Link>
+              <button className="profileDropdownItem dangerText" onClick={logout} type="button">
+                <LogOut size={17} />
+                <span>Logout</span>
+              </button>
+            </div>
+          ) : null}
         </div>
       </header>
       <main className="page">{children}</main>
