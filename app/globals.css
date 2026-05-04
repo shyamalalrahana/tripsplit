@@ -130,6 +130,29 @@ a {
   margin-bottom: 16px;
 }
 
+.tripHero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 18px;
+  align-items: end;
+  margin-bottom: 16px;
+}
+
+.tripHero h1 {
+  max-width: 760px;
+}
+
+.tripHero .muted {
+  max-width: 680px;
+}
+
+.tripHeroActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
 .kicker {
   color: var(--blue);
   font-size: 12px;
@@ -248,6 +271,12 @@ h3 {
   border-radius: 14px;
   background: #ffffff;
   color: var(--ink);
+}
+
+.dangerIcon {
+  border-color: rgba(244, 63, 94, 0.16);
+  background: #fff1f2;
+  color: #be123c;
 }
 
 .buttonGreen {
@@ -834,8 +863,67 @@ textarea:focus {
   font-size: 22px;
 }
 
-.tripEditPanel {
-  margin-top: 16px;
+.tripList {
+  display: grid;
+  gap: 12px;
+}
+
+.tripListCard {
+  display: grid;
+  gap: 14px;
+}
+
+.tripListMain {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: center;
+}
+
+.tripListOpen {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 14px;
+  align-items: center;
+  min-width: 0;
+}
+
+.tripListOpen h3,
+.tripListOpen p {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tripThumb {
+  display: grid;
+  width: 54px;
+  height: 54px;
+  place-items: center;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #ede9fe, #dcfce7);
+  color: #6c63ff;
+  font-size: 16px;
+  font-weight: 950;
+}
+
+.tripListActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.tripOpenButton {
+  min-height: 42px;
+  padding-inline: 14px;
+}
+
+.tripInlineEdit {
+  display: grid;
+  gap: 12px;
+  border-top: 1px solid rgba(15, 23, 42, 0.08);
+  padding-top: 14px;
 }
 
 .expenseInsightCard {
@@ -1112,6 +1200,34 @@ textarea:focus {
   .row {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .tripHero,
+  .tripListMain {
+    grid-template-columns: 1fr;
+  }
+
+  .tripHeroActions,
+  .tripListActions {
+    justify-content: stretch;
+  }
+
+  .tripHeroActions > *,
+  .tripOpenButton {
+    flex: 1 1 auto;
+  }
+
+  .tripListActions {
+    display: grid;
+    grid-template-columns: 42px 42px minmax(0, 1fr);
+  }
+
+  .tripListActions.single {
+    grid-template-columns: 1fr;
+  }
+
+  .tripListActions .tripOpenButton {
+    width: 100%;
   }
 
   .card,

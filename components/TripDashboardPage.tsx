@@ -1,9 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { Copy, Pencil, Plus, Share2, Trash2, X } from "lucide-react";
+import { Copy, Plus, Share2 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { AppShell } from "@/components/AppShell";
 import { calculateBalances, calculateSettlementDrafts, formatMoney } from "@/lib/calculations";
 import { supabase } from "@/lib/supabase";
@@ -16,7 +15,6 @@ type Bundle = {
   splits: ExpenseSplit[];
   settlements: Settlement[];
   currentMemberId: string | null;
-  currentProfileId: string | null;
 };
 
 const categoryImages: Record<string, { icon: string; tone: string }> = {
@@ -34,12 +32,8 @@ function formatExpenseDate(date: string) {
 }
 
 export function TripDashboardPage({ tripId }: { tripId: string }) {
-  const router = useRouter();
   const [bundle, setBundle] = useState<Bundle | null>(null);
   const [message, setMessage] = useState("");
-  const [editingTrip, setEditingTrip] = useState(false);
-  const [savingTrip, setSavingTrip] = useState(false);
-  const [deletingTrip, setDeletingTrip] = useState(false);
 
   useEffect(() => {
     load();
@@ -64,8 +58,7 @@ export function TripDashboardPage({ tripId }: { tripId: string }) {
         expenses: expenses || [],
         splits: splits || [],
         settlements: settlements || [],
-        currentMemberId: currentMember?.id || null,
-        currentProfileId: profile?.id || null
+        currentMemberId: currentMember?.id || null
       });
     }
   }
@@ -78,44 +71,6 @@ export function TripDashboardPage({ tripId }: { tripId: string }) {
     setMessage("Invite link copied. Share this link with your friends.");
   }
 
-  async function updateTrip(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (!bundle || savingTrip) return;
-    setSavingTrip(true);
-    const form = new FormData(event.currentTarget);
-    const payload = {
-      name: String(form.get("name") || "").trim(),
-      destination: String(form.get("destination") || "").trim(),
-      start_date: String(form.get("start_date") || "") || null,
-      end_date: String(form.get("end_date") || "") || null,
-      currency: String(form.get("currency") || "INR"),
-      trip_image_url: String(form.get("trip_image_url") || "").trim()
-    };
-    const { data, error } = await supabase.from("trips").update(payload).eq("id", tripId).select("*").single();
-    setSavingTrip(false);
-    if (error || !data) {
-      setMessage(error?.message || "Could not update trip.");
-      return;
-    }
-    setBundle({ ...bundle, trip: data });
-    setEditingTrip(false);
-    setMessage("Trip details updated.");
-  }
-
-  async function deleteTrip() {
-    if (!bundle || deletingTrip) return;
-    const confirmed = window.confirm(`Delete "${bundle.trip.name}"? This removes members, expenses, splits, and settlements.`);
-    if (!confirmed) return;
-    setDeletingTrip(true);
-    const { error } = await supabase.from("trips").delete().eq("id", tripId);
-    setDeletingTrip(false);
-    if (error) {
-      setMessage(error.message || "Could not delete trip.");
-      return;
-    }
-    router.push("/");
-  }
-
   if (!bundle) return <AppShell tripId={tripId}><div className="card">Loading trip...</div></AppShell>;
 
   const balances = calculateBalances(bundle.members, bundle.expenses, bundle.splits);
@@ -123,7 +78,6 @@ export function TripDashboardPage({ tripId }: { tripId: string }) {
   const settlementDrafts = calculateSettlementDrafts(balances, bundle.trip.name);
   const receivers = balances.filter((item) => item.balance > 0.01);
   const payers = balances.filter((item) => item.balance < -0.01);
-  const isTripOwner = Boolean(bundle.currentProfileId && bundle.trip.created_by === bundle.currentProfileId);
   const categoryTotals = bundle.expenses.reduce<Record<string, number>>((acc, expense) => {
     acc[expense.category] = (acc[expense.category] || 0) + Number(expense.amount || 0);
     return acc;
@@ -146,46 +100,17 @@ export function TripDashboardPage({ tripId }: { tripId: string }) {
 
   return (
     <AppShell tripId={tripId}>
-      <section className="cardSoft sectionHead">
+      <section className="cardSoft tripHero">
         <div>
           <p className="kicker">{bundle.trip.destination || "Trip group"}</p>
           <h1>{bundle.trip.name}</h1>
           <p className="muted">Share expenses with friends and settle by UPI QR. Payment confirmation is manual for now.</p>
         </div>
-        <div className="cluster">
-          {isTripOwner ? (
-            <>
-              <button className="buttonSecondary" onClick={() => setEditingTrip(true)} type="button"><Pencil size={16} /> Edit Trip</button>
-              <button className="buttonDanger" disabled={deletingTrip} onClick={deleteTrip} type="button"><Trash2 size={16} /> {deletingTrip ? "Deleting..." : "Delete"}</button>
-            </>
-          ) : null}
+        <div className="tripHeroActions">
           <button className="buttonSecondary" onClick={copyInvite} type="button"><Share2 size={16} /> Share Trip</button>
           <Link className="button" href={`/trips/${tripId}/expenses/new`}><Plus size={16} /> Add Expense</Link>
         </div>
       </section>
-
-      {editingTrip ? (
-        <section className="card tripEditPanel">
-          <div className="sectionHead">
-            <div>
-              <p className="kicker">Owner tools</p>
-              <h2>Edit trip details</h2>
-            </div>
-            <button className="iconButton" onClick={() => setEditingTrip(false)} type="button" aria-label="Close edit trip"><X size={18} /></button>
-          </div>
-          <form className="grid" onSubmit={updateTrip}>
-            <div className="grid2">
-              <div className="field"><label>Trip name</label><input name="name" defaultValue={bundle.trip.name} required /></div>
-              <div className="field"><label>Destination</label><input name="destination" defaultValue={bundle.trip.destination || ""} /></div>
-              <div className="field"><label>Start date</label><input name="start_date" type="date" defaultValue={bundle.trip.start_date || ""} /></div>
-              <div className="field"><label>End date</label><input name="end_date" type="date" defaultValue={bundle.trip.end_date || ""} /></div>
-              <div className="field"><label>Currency</label><select name="currency" defaultValue={bundle.trip.currency}><option>INR</option><option>USD</option><option>EUR</option><option>AED</option></select></div>
-              <div className="field"><label>Trip image URL optional</label><input name="trip_image_url" defaultValue={bundle.trip.trip_image_url || ""} /></div>
-            </div>
-            <button className="button" disabled={savingTrip} type="submit">{savingTrip ? "Saving..." : "Save trip"}</button>
-          </form>
-        </section>
-      ) : null}
 
       {message ? <p className="badge paid">{message}</p> : null}
 
