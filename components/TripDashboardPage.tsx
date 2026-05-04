@@ -14,7 +14,22 @@ type Bundle = {
   expenses: Expense[];
   splits: ExpenseSplit[];
   settlements: Settlement[];
+  currentMemberId: string | null;
 };
+
+const categoryImages: Record<string, { icon: string; tone: string }> = {
+  Food: { icon: "🍽️", tone: "mint" },
+  Petrol: { icon: "⛽", tone: "sun" },
+  Hotel: { icon: "🏨", tone: "peach" },
+  Tickets: { icon: "🎟️", tone: "violet" },
+  Shopping: { icon: "🛍️", tone: "rose" },
+  Parking: { icon: "🅿️", tone: "sky" },
+  Other: { icon: "🧾", tone: "slate" }
+};
+
+function formatExpenseDate(date: string) {
+  return new Intl.DateTimeFormat("en", { month: "short", day: "numeric" }).format(new Date(date));
+}
 
 export function TripDashboardPage({ tripId }: { tripId: string }) {
   const [bundle, setBundle] = useState<Bundle | null>(null);
@@ -33,7 +48,19 @@ export function TripDashboardPage({ tripId }: { tripId: string }) {
       ? await supabase.from("expense_splits").select("*").in("expense_id", expenseIds)
       : { data: [] as ExpenseSplit[] };
     const { data: settlements } = await supabase.from("settlements").select("*").eq("trip_id", tripId);
-    if (trip) setBundle({ trip, members: members || [], expenses: expenses || [], splits: splits || [], settlements: settlements || [] });
+    const { data: auth } = await supabase.auth.getUser();
+    const { data: profile } = auth.user ? await supabase.from("profiles").select("id").eq("user_id", auth.user.id).maybeSingle() : { data: null };
+    const currentMember = profile ? (members || []).find((member) => member.profile_id === profile.id) : null;
+    if (trip) {
+      setBundle({
+        trip,
+        members: members || [],
+        expenses: expenses || [],
+        splits: splits || [],
+        settlements: settlements || [],
+        currentMemberId: currentMember?.id || null
+      });
+    }
   }
 
   async function copyInvite() {
@@ -51,16 +78,6 @@ export function TripDashboardPage({ tripId }: { tripId: string }) {
   const settlementDrafts = calculateSettlementDrafts(balances, bundle.trip.name);
   const receivers = balances.filter((item) => item.balance > 0.01);
   const payers = balances.filter((item) => item.balance < -0.01);
-  const categoryTotals = bundle.expenses.reduce<Record<string, number>>((acc, expense) => {
-    acc[expense.category] = (acc[expense.category] || 0) + Number(expense.amount || 0);
-    return acc;
-  }, {});
-  const categoryChart = Object.entries(categoryTotals)
-    .map(([category, amount]) => ({ category, amount }))
-    .sort((a, b) => b.amount - a.amount)
-    .slice(0, 6);
-  const maxCategoryAmount = Math.max(...categoryChart.map((item) => item.amount), 1);
-
   return (
     <AppShell tripId={tripId}>
       <section className="cardSoft sectionHead">
@@ -86,38 +103,41 @@ export function TripDashboardPage({ tripId }: { tripId: string }) {
 
       <section className="twoCol" style={{ marginTop: 16 }}>
         <div className="grid">
-          <div className="card">
-            <div className="sectionHead">
-              <div><h2>Recent expenses</h2><p className="muted">A quick graph of where the trip money is going.</p></div>
-              <Link className="buttonSecondary" href={`/trips/${tripId}/expenses/new`}>Add</Link>
+          <div className="card recentExpensesCard">
+            <div className="recentExpensesHeader">
+              <h2>Recent Expenses</h2>
+              <Link href={`/trips/${tripId}/expenses/new`}>All</Link>
             </div>
             {bundle.expenses.length ? (
-              <div className="expenseGraph">
-                <div className="expenseGraphBars">
-                  {categoryChart.map((item, index) => (
-                    <div className="expenseBarRow" key={item.category}>
-                      <div className="expenseBarMeta">
-                        <span>{item.category}</span>
-                        <b>{formatMoney(item.amount, bundle.trip.currency)}</b>
-                      </div>
-                      <div className="expenseBarTrack">
-                        <div className={`expenseBarFill tone${(index % 5) + 1}`} style={{ width: `${Math.max(8, (item.amount / maxCategoryAmount) * 100)}%` }} />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <div className="recentExpenseRows">
-                  {bundle.expenses.slice(0, 5).map((expense) => {
+              <div className="recentExpenseRows">
+                {bundle.expenses.slice(0, 5).map((expense) => {
                     const payer = bundle.members.find((member) => member.id === expense.paid_by_member_id);
+                    const isPaidByCurrentMember = Boolean(bundle.currentMemberId && expense.paid_by_member_id === bundle.currentMemberId);
+                    const currentSplit = bundle.currentMemberId
+                      ? bundle.splits.find((split) => split.expense_id === expense.id && split.member_id === bundle.currentMemberId)
+                      : null;
+                    const sharedCount = bundle.splits.filter((split) => split.expense_id === expense.id).length;
+                    const visual = categoryImages[expense.category] || categoryImages.Other;
                     return (
                       <Link className="recentExpenseRow" href={`/trips/${tripId}/expenses/${expense.id}`} key={expense.id}>
-                        <span className="expenseCategoryDot">{expense.category.slice(0, 2).toUpperCase()}</span>
-                        <span><strong>{expense.title}</strong><small>{payer?.name || "Someone"} paid for {expense.category}</small></span>
-                        <b>{formatMoney(Number(expense.amount), bundle.trip.currency)}</b>
+                        <span className={`expenseCategoryImage ${visual.tone}`} aria-hidden="true">{visual.icon}</span>
+                        <span className="recentExpenseCopy">
+                          <strong>{expense.title}</strong>
+                          <small>Paid by {isPaidByCurrentMember ? "You" : payer?.name || "Someone"} · {formatExpenseDate(expense.expense_date)}</small>
+                        </span>
+                        <span className="recentExpenseMoney">
+                          <b>{formatMoney(Number(expense.amount), bundle.trip.currency)}</b>
+                          <small className={isPaidByCurrentMember ? "paidText" : ""}>
+                            {isPaidByCurrentMember
+                              ? "You paid"
+                              : currentSplit
+                                ? `Your share ${formatMoney(Number(currentSplit.split_amount), bundle.trip.currency)}`
+                                : `Shared with ${sharedCount}`}
+                          </small>
+                        </span>
                       </Link>
                     );
                   })}
-                </div>
               </div>
             ) : <div className="empty"><div><h3>No expenses yet</h3><p className="muted">Add your first trip expense.</p></div></div>}
           </div>
