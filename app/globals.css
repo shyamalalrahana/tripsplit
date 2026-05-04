@@ -1575,13 +1575,48 @@ textarea:focus {
   }
 
   .cardSoft {
-    margin: -14px 0 18px;
-    padding: 18px 18px 24px;
+    margin: -14px 0 14px;
+    padding: 16px 18px 20px;
   }
 
   .stats,
   .grid2 {
-    gap: 14px;
+    gap: 10px;
+  }
+
+  .stats {
+    margin-top: 0;
+  }
+
+  .stat {
+    min-height: 96px;
+    padding: 14px;
+  }
+
+  .statHeader {
+    gap: 8px;
+  }
+
+  .statHeader .muted {
+    font-size: 14px;
+    line-height: 1.15;
+  }
+
+  .statIcon {
+    width: 30px;
+    height: 30px;
+    border-radius: 11px;
+  }
+
+  .statIcon svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .stat b {
+    margin-top: 12px;
+    font-size: 28px;
+    line-height: 0.95;
   }
 
   .card,
