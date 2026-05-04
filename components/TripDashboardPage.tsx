@@ -51,6 +51,15 @@ export function TripDashboardPage({ tripId }: { tripId: string }) {
   const settlementDrafts = calculateSettlementDrafts(balances, bundle.trip.name);
   const receivers = balances.filter((item) => item.balance > 0.01);
   const payers = balances.filter((item) => item.balance < -0.01);
+  const categoryTotals = bundle.expenses.reduce<Record<string, number>>((acc, expense) => {
+    acc[expense.category] = (acc[expense.category] || 0) + Number(expense.amount || 0);
+    return acc;
+  }, {});
+  const categoryChart = Object.entries(categoryTotals)
+    .map(([category, amount]) => ({ category, amount }))
+    .sort((a, b) => b.amount - a.amount)
+    .slice(0, 6);
+  const maxCategoryAmount = Math.max(...categoryChart.map((item) => item.amount), 1);
 
   return (
     <AppShell tripId={tripId}>
@@ -79,20 +88,38 @@ export function TripDashboardPage({ tripId }: { tripId: string }) {
         <div className="grid">
           <div className="card">
             <div className="sectionHead">
-              <div><h2>Recent expenses</h2><p className="muted">Rahul paid for Petrol, Food, Hotel, and more.</p></div>
+              <div><h2>Recent expenses</h2><p className="muted">A quick graph of where the trip money is going.</p></div>
               <Link className="buttonSecondary" href={`/trips/${tripId}/expenses/new`}>Add</Link>
             </div>
-            <div className="grid">
-              {bundle.expenses.length ? bundle.expenses.slice(0, 5).map((expense) => {
-                const payer = bundle.members.find((member) => member.id === expense.paid_by_member_id);
-                return (
-                  <Link className="card row" href={`/trips/${tripId}/expenses/${expense.id}`} key={expense.id}>
-                    <div><h3>{expense.title}</h3><p className="muted">{payer?.name || "Someone"} paid for {expense.category}</p></div>
-                    <b>{formatMoney(Number(expense.amount), bundle.trip.currency)}</b>
-                  </Link>
-                );
-              }) : <div className="empty"><div><h3>No expenses yet</h3><p className="muted">Add your first trip expense.</p></div></div>}
-            </div>
+            {bundle.expenses.length ? (
+              <div className="expenseGraph">
+                <div className="expenseGraphBars">
+                  {categoryChart.map((item, index) => (
+                    <div className="expenseBarRow" key={item.category}>
+                      <div className="expenseBarMeta">
+                        <span>{item.category}</span>
+                        <b>{formatMoney(item.amount, bundle.trip.currency)}</b>
+                      </div>
+                      <div className="expenseBarTrack">
+                        <div className={`expenseBarFill tone${(index % 5) + 1}`} style={{ width: `${Math.max(8, (item.amount / maxCategoryAmount) * 100)}%` }} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="recentExpenseRows">
+                  {bundle.expenses.slice(0, 5).map((expense) => {
+                    const payer = bundle.members.find((member) => member.id === expense.paid_by_member_id);
+                    return (
+                      <Link className="recentExpenseRow" href={`/trips/${tripId}/expenses/${expense.id}`} key={expense.id}>
+                        <span className="expenseCategoryDot">{expense.category.slice(0, 2).toUpperCase()}</span>
+                        <span><strong>{expense.title}</strong><small>{payer?.name || "Someone"} paid for {expense.category}</small></span>
+                        <b>{formatMoney(Number(expense.amount), bundle.trip.currency)}</b>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            ) : <div className="empty"><div><h3>No expenses yet</h3><p className="muted">Add your first trip expense.</p></div></div>}
           </div>
         </div>
         <aside className="grid">
