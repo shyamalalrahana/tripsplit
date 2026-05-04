@@ -14,6 +14,7 @@ export function MembersPage({ tripId }: { tripId: string }) {
   const [splits, setSplits] = useState<ExpenseSplit[]>([]);
   const [editingMemberId, setEditingMemberId] = useState<string | null>(null);
   const [message, setMessage] = useState("");
+  const [savingMemberId, setSavingMemberId] = useState<string | null>(null);
 
   useEffect(() => {
     load();
@@ -33,18 +34,30 @@ export function MembersPage({ tripId }: { tripId: string }) {
 
   async function updateMember(event: React.FormEvent<HTMLFormElement>, member: TripMember) {
     event.preventDefault();
+    if (savingMemberId) return;
     setMessage("");
+    setSavingMemberId(member.id);
     const form = new FormData(event.currentTarget);
-    const { error } = await supabase.from("trip_members").update({
+    const payload = {
       name: String(form.get("name") || ""),
       phone: String(form.get("phone") || ""),
       avatar_color: String(form.get("avatar_color") || "#2563eb")
-    }).eq("id", member.id);
+    };
+    const { data, error } = await supabase.from("trip_members").update(payload).eq("id", member.id).select("*").single();
     if (error) {
       setMessage(error.message);
+      setSavingMemberId(null);
       return;
     }
+    if (!data) {
+      setMessage("Profile was not updated. Please check member permissions in Supabase.");
+      setSavingMemberId(null);
+      return;
+    }
+    setMembers((current) => current.map((item) => (item.id === member.id ? data : item)));
+    setMessage(`${data.name} profile updated.`);
     setEditingMemberId(null);
+    setSavingMemberId(null);
     load();
   }
 
@@ -103,7 +116,7 @@ export function MembersPage({ tripId }: { tripId: string }) {
                     <div className="field"><label>Avatar color</label><input name="avatar_color" defaultValue={member.avatar_color || "#2563eb"} /></div>
                   </div>
                   <div className="cluster">
-                    <button className="button" type="submit">Save profile</button>
+                    <button className="button" disabled={savingMemberId === member.id} type="submit">{savingMemberId === member.id ? "Saving..." : "Save profile"}</button>
                     <button className="buttonSecondary" onClick={() => setEditingMemberId(null)} type="button">Cancel</button>
                   </div>
                 </>

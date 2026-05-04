@@ -95,20 +95,26 @@ export function AddExpensePage({ tripId }: { tripId: string }) {
           <div className="field"><label>Split type</label><select value={splitType} onChange={(event) => setSplitType(event.target.value as typeof splitType)}><option value="equal">Equal split</option><option value="custom">Custom amount</option><option value="percentage">Percentage split</option></select></div>
         </div>
 
-        <div className="card grid">
+        <div className="splitPanel grid">
           <h3>Split between selected members</h3>
           <p className="muted">{splitHint}</p>
-          <div className="grid2">
+          <div className="splitMemberGrid">
             {members.map((member) => (
-              <label className="card cluster" key={member.id}>
+              <label className={`splitMemberOption ${selected.includes(member.id) ? "selected" : ""}`} key={member.id}>
                 <input
+                  className="splitCheckbox"
                   checked={selected.includes(member.id)}
                   onChange={(event) => setSelected(event.target.checked ? [...selected, member.id] : selected.filter((id) => id !== member.id))}
                   type="checkbox"
                 />
-                <span>{member.name}</span>
+                <span className="splitAvatar" style={{ background: member.avatar_color || "#2563eb" }}>{member.name.slice(0, 2).toUpperCase()}</span>
+                <span className="splitMemberText">
+                  <strong>{member.name}</strong>
+                  <small>{selected.includes(member.id) ? "Included in split" : "Not included"}</small>
+                </span>
                 {splitType !== "equal" ? (
                   <input
+                    className="splitValue"
                     min="0"
                     onChange={(event) => setCustomValues({ ...customValues, [member.id]: Number(event.target.value || 0) })}
                     placeholder={splitType === "percentage" ? "%" : trip.currency}

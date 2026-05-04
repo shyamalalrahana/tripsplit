@@ -154,6 +154,10 @@ create policy "members update own or admin" on public.trip_members
     public.is_trip_admin(trip_id)
     or exists (select 1 from public.profiles p where p.id = profile_id and p.user_id = auth.uid())
     or exists (select 1 from public.trips t where t.id = trip_id and t.invite_code is not null)
+  ) with check (
+    public.is_trip_admin(trip_id)
+    or exists (select 1 from public.profiles p where p.id = profile_id and p.user_id = auth.uid())
+    or exists (select 1 from public.trips t where t.id = trip_id and t.invite_code is not null)
   );
 
 drop policy if exists "members delete admin or invite" on public.trip_members;
