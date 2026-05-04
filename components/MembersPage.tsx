@@ -11,6 +11,8 @@ export function MembersPage({ tripId }: { tripId: string }) {
   const [members, setMembers] = useState<TripMember[]>([]);
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [splits, setSplits] = useState<ExpenseSplit[]>([]);
+  const [editingMemberId, setEditingMemberId] = useState<string | null>(null);
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     load();
@@ -30,13 +32,40 @@ export function MembersPage({ tripId }: { tripId: string }) {
 
   async function updateMember(event: React.FormEvent<HTMLFormElement>, member: TripMember) {
     event.preventDefault();
+    setMessage("");
     const form = new FormData(event.currentTarget);
-    await supabase.from("trip_members").update({
+    const { error } = await supabase.from("trip_members").update({
       name: String(form.get("name") || ""),
       phone: String(form.get("phone") || ""),
       upi_id: String(form.get("upi_id") || ""),
       avatar_color: String(form.get("avatar_color") || "#2563eb")
     }).eq("id", member.id);
+    if (error) {
+      setMessage(error.message);
+      return;
+    }
+    setEditingMemberId(null);
+    load();
+  }
+
+  async function deleteMember(member: TripMember) {
+    setMessage("");
+    if (member.role === "owner") {
+      setMessage("Trip owner cannot be removed from the members page.");
+      return;
+    }
+    const usedInExpenses = expenses.some((expense) => expense.paid_by_member_id === member.id);
+    const usedInSplits = splits.some((split) => split.member_id === member.id);
+    if (usedInExpenses || usedInSplits) {
+      setMessage(`${member.name} is already used in expenses. Delete or edit those expenses first.`);
+      return;
+    }
+    if (!confirm(`Delete ${member.name} from this trip?`)) return;
+    const { error } = await supabase.from("trip_members").delete().eq("id", member.id);
+    if (error) {
+      setMessage(error.message);
+      return;
+    }
     load();
   }
 
@@ -46,11 +75,13 @@ export function MembersPage({ tripId }: { tripId: string }) {
   return (
     <AppShell tripId={tripId}>
       <section className="sectionHead">
-        <div><p className="kicker">Members</p><h1>Trip members</h1><p className="muted">Add UPI IDs so QR payments can be generated for settlements.</p></div>
+        <div><p className="kicker">Members</p><h1>Trip members</h1><p className="muted">Edit friend profiles, add UPI IDs, or remove members before expenses are added.</p></div>
       </section>
+      {message ? <p className="badge pending">{message}</p> : null}
       <div className="grid2">
         {members.map((member) => {
           const balance = balances.find((item) => item.member.id === member.id);
+          const isEditing = editingMemberId === member.id;
           return (
             <form className="card grid" onSubmit={(event) => updateMember(event, member)} key={member.id}>
               <div className="row">
@@ -62,13 +93,33 @@ export function MembersPage({ tripId }: { tripId: string }) {
                   {formatMoney(Math.abs(balance?.balance || 0), trip.currency)}
                 </span>
               </div>
-              <div className="grid2">
-                <div className="field"><label>Name</label><input name="name" defaultValue={member.name} required /></div>
-                <div className="field"><label>Phone</label><input name="phone" defaultValue={member.phone || ""} /></div>
-                <div className="field"><label>UPI ID</label><input name="upi_id" defaultValue={member.upi_id || ""} placeholder="name@bank" /></div>
-                <div className="field"><label>Avatar color</label><input name="avatar_color" defaultValue={member.avatar_color || "#2563eb"} /></div>
-              </div>
-              <button className="buttonSecondary" type="submit">Save member</button>
+              {isEditing ? (
+                <>
+                  <div className="grid2">
+                    <div className="field"><label>Name</label><input name="name" defaultValue={member.name} required /></div>
+                    <div className="field"><label>Phone</label><input name="phone" defaultValue={member.phone || ""} /></div>
+                    <div className="field"><label>UPI ID</label><input name="upi_id" defaultValue={member.upi_id || ""} placeholder="name@bank" /></div>
+                    <div className="field"><label>Avatar color</label><input name="avatar_color" defaultValue={member.avatar_color || "#2563eb"} /></div>
+                  </div>
+                  <div className="cluster">
+                    <button className="button" type="submit">Save profile</button>
+                    <button className="buttonSecondary" onClick={() => setEditingMemberId(null)} type="button">Cancel</button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="grid2">
+                    <div><p className="muted">Phone</p><b>{member.phone || "Not added"}</b></div>
+                    <div><p className="muted">UPI ID</p><b>{member.upi_id || "Not added"}</b></div>
+                    <div><p className="muted">Paid</p><b>{formatMoney(balance?.paid || 0, trip.currency)}</b></div>
+                    <div><p className="muted">Share</p><b>{formatMoney(balance?.share || 0, trip.currency)}</b></div>
+                  </div>
+                  <div className="cluster">
+                    <button className="buttonSecondary" onClick={() => setEditingMemberId(member.id)} type="button">Edit profile</button>
+                    <button className="buttonDanger" onClick={() => deleteMember(member)} type="button">Delete member</button>
+                  </div>
+                </>
+              )}
             </form>
           );
         })}
