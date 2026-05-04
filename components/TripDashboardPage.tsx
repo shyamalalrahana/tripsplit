@@ -86,17 +86,7 @@ export function TripDashboardPage({ tripId }: { tripId: string }) {
     .map(([category, amount]) => ({ category, amount, visual: categoryImages[category] || categoryImages.Other }))
     .sort((a, b) => b.amount - a.amount)
     .slice(0, 5);
-  const graphStops = categoryChart.length
-    ? categoryChart.reduce<{ stops: string[]; cursor: number }>((acc, item, index) => {
-        const colors = ["#6c63ff", "#22c55e", "#f97316", "#06b6d4", "#ec4899"];
-        const start = acc.cursor;
-        const end = start + (item.amount / total) * 100;
-        acc.stops.push(`${colors[index]} ${start}% ${end}%`);
-        acc.cursor = end;
-        return acc;
-      }, { stops: [], cursor: 0 }).stops.join(", ")
-    : "#eef2f7 0% 100%";
-  const topCategory = categoryChart[0];
+  const maxCategoryAmount = Math.max(...categoryChart.map((item) => item.amount), 1);
 
   return (
     <AppShell tripId={tripId}>
@@ -125,26 +115,28 @@ export function TripDashboardPage({ tripId }: { tripId: string }) {
         <div className="grid">
           <div className="card expenseInsightCard">
             <div className="recentExpensesHeader">
-              <h2>Expense Graph</h2>
+              <h2>Spending</h2>
               <Link href={`/trips/${tripId}/expenses/new`}>Add</Link>
             </div>
             {bundle.expenses.length ? (
-              <div className="expenseInsight">
-                <div className="expenseDonut" style={{ background: `conic-gradient(${graphStops})` }}>
-                  <div>
-                    <span>Total</span>
-                    <b>{formatMoney(total, bundle.trip.currency)}</b>
-                  </div>
+              <div className="simpleExpenseGraph">
+                <div className="simpleGraphTotal">
+                  <span className="muted">Total spent</span>
+                  <b>{formatMoney(total, bundle.trip.currency)}</b>
                 </div>
-                <div className="expenseLegend">
+                <div className="simpleGraphRows">
                   {categoryChart.map((item, index) => (
-                    <div className="expenseLegendItem" key={item.category}>
-                      <span className={`expenseCategoryImage small ${item.visual.tone}`} aria-hidden="true">{item.visual.icon}</span>
-                      <span><strong>{item.category}</strong><small>{Math.round((item.amount / total) * 100)}% of trip spend</small></span>
-                      <b>{formatMoney(item.amount, bundle.trip.currency)}</b>
+                    <div className="simpleGraphRow" key={item.category}>
+                      <div className="simpleGraphMeta">
+                        <span><span aria-hidden="true">{item.visual.icon}</span>{item.category}</span>
+                        <b>{formatMoney(item.amount, bundle.trip.currency)}</b>
+                      </div>
+                      <div className="simpleGraphTrack" aria-hidden="true">
+                        <div className={`simpleGraphFill tone${(index % 5) + 1}`} style={{ width: `${Math.max(8, (item.amount / maxCategoryAmount) * 100)}%` }} />
+                      </div>
+                      <small>{Math.round((item.amount / total) * 100)}% of total</small>
                     </div>
                   ))}
-                  {topCategory ? <p className="graphMicrocopy">{topCategory.visual.icon} Most money went to {topCategory.category.toLowerCase()}.</p> : null}
                 </div>
               </div>
             ) : <div className="empty"><div><h3>No graph yet</h3><p className="muted">Add expenses to see the trip spending graph.</p></div></div>}

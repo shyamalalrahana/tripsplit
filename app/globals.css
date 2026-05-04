@@ -927,102 +927,98 @@ textarea:focus {
 }
 
 .expenseInsightCard {
-  overflow: hidden;
-  background:
-    radial-gradient(circle at 12% 0%, rgba(108, 99, 255, 0.12), transparent 26%),
-    linear-gradient(180deg, #ffffff 0%, #f8f7ff 100%);
-}
-
-.expenseInsight {
-  display: grid;
-  grid-template-columns: 220px minmax(0, 1fr);
-  gap: 20px;
-  align-items: center;
-}
-
-.expenseDonut {
-  display: grid;
-  width: 220px;
-  aspect-ratio: 1;
-  place-items: center;
-  border-radius: 999px;
-  box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.06), 0 18px 38px rgba(108, 99, 255, 0.16);
-}
-
-.expenseDonut > div {
-  display: grid;
-  width: 130px;
-  aspect-ratio: 1;
-  place-items: center;
-  border-radius: 999px;
   background: #ffffff;
-  text-align: center;
 }
 
-.expenseDonut span {
-  color: var(--muted);
-  font-size: 12px;
+.simpleExpenseGraph {
+  display: grid;
+  gap: 16px;
+}
+
+.simpleGraphTotal {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+  padding-bottom: 14px;
+}
+
+.simpleGraphTotal b {
+  color: #0b0d14;
+  font-size: 28px;
+  font-weight: 950;
+  line-height: 1;
+}
+
+.simpleGraphRows {
+  display: grid;
+  gap: 14px;
+}
+
+.simpleGraphRow {
+  display: grid;
+  gap: 7px;
+}
+
+.simpleGraphMeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.simpleGraphMeta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #0b0d14;
   font-weight: 900;
 }
 
-.expenseDonut b {
+.simpleGraphMeta b {
   color: #0b0d14;
-  font-size: 20px;
   font-weight: 950;
-}
-
-.expenseLegend {
-  display: grid;
-  gap: 10px;
-}
-
-.expenseLegendItem {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  gap: 12px;
-  align-items: center;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.74);
-  padding: 10px;
-}
-
-.expenseLegendItem span:nth-child(2) {
-  display: grid;
-  gap: 2px;
-  min-width: 0;
-}
-
-.expenseLegendItem strong,
-.expenseLegendItem small {
-  overflow: hidden;
-  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.expenseLegendItem strong {
-  color: #0b0d14;
-  font-weight: 950;
+.simpleGraphTrack {
+  overflow: hidden;
+  height: 8px;
+  border-radius: 999px;
+  background: #edf0f5;
 }
 
-.expenseLegendItem small {
+.simpleGraphFill {
+  height: 100%;
+  border-radius: 999px;
+  background: #6c63ff;
+}
+
+.simpleGraphFill.tone1 {
+  background: #6c63ff;
+}
+
+.simpleGraphFill.tone2 {
+  background: #22c55e;
+}
+
+.simpleGraphFill.tone3 {
+  background: #f97316;
+}
+
+.simpleGraphFill.tone4 {
+  background: #06b6d4;
+}
+
+.simpleGraphFill.tone5 {
+  background: #94a3b8;
+}
+
+.simpleGraphRow small {
   color: var(--muted);
   font-size: 12px;
   font-weight: 800;
-}
-
-.expenseLegendItem b {
-  color: #0b0d14;
-  font-weight: 950;
-  white-space: nowrap;
-}
-
-.graphMicrocopy {
-  margin: 2px 0 0;
-  border-radius: 16px;
-  background: #ffffff;
-  color: #6c63ff;
-  padding: 10px 12px;
-  font-weight: 900;
 }
 
 .recentExpenseCopy {
@@ -1272,21 +1268,9 @@ textarea:focus {
     font-size: 25px;
   }
 
-  .expenseInsight {
-    grid-template-columns: 1fr;
-  }
-
-  .expenseDonut {
-    width: min(100%, 220px);
-    margin-inline: auto;
-  }
-
-  .expenseLegendItem {
-    grid-template-columns: auto minmax(0, 1fr);
-  }
-
-  .expenseLegendItem b {
-    grid-column: 2;
+  .simpleGraphTotal {
+    align-items: flex-start;
+    flex-direction: column;
   }
 
   .recentExpensesHeader h2 {
