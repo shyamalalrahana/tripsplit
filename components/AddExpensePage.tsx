@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AvatarView } from "@/components/AvatarView";
 import { AppShell } from "@/components/AppShell";
+import { imageFileToDataUrl } from "@/lib/avatar";
 import { buildExpenseSplits, validateSplits } from "@/lib/expense";
 import { supabase } from "@/lib/supabase";
 import type { Trip, TripMember } from "@/lib/types";
@@ -18,6 +19,7 @@ export function AddExpensePage({ tripId }: { tripId: string }) {
   const [selected, setSelected] = useState<string[]>([]);
   const [customValues, setCustomValues] = useState<Record<string, number>>({});
   const [message, setMessage] = useState("");
+  const [receiptPreview, setReceiptPreview] = useState("");
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -45,6 +47,14 @@ export function AddExpensePage({ tripId }: { tripId: string }) {
     setMessage("");
     if (!trip) return;
     const form = new FormData(event.currentTarget);
+    let receiptUrl = receiptPreview;
+    try {
+      receiptUrl = (await imageFileToDataUrl(form.get("receipt") as File | null)) || receiptUrl;
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not upload receipt photo.");
+      setSaving(false);
+      return;
+    }
     const amount = Number(form.get("amount") || 0);
     const splits = buildExpenseSplits({ amount, splitType, selectedMemberIds: selected, customValues, members });
     const validation = validateSplits(amount, splitType, splits);
@@ -63,7 +73,7 @@ export function AddExpensePage({ tripId }: { tripId: string }) {
       paid_by_member_id: String(form.get("paid_by_member_id")),
       expense_date: String(form.get("expense_date")),
       notes: String(form.get("notes") || ""),
-      receipt_url: String(form.get("receipt_url") || ""),
+      receipt_url: receiptUrl || "",
       created_by: profile?.id || null
     }).select("*").single();
     if (error || !expense) {
@@ -79,6 +89,16 @@ export function AddExpensePage({ tripId }: { tripId: string }) {
     }
     await supabase.from("settlements").delete().eq("trip_id", tripId);
     router.push(`/trips/${tripId}`);
+  }
+
+  async function previewReceipt(event: React.ChangeEvent<HTMLInputElement>) {
+    setMessage("");
+    try {
+      const image = await imageFileToDataUrl(event.target.files?.[0] || null);
+      if (image) setReceiptPreview(image);
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not upload receipt photo.");
+    }
   }
 
   if (!trip) return <AppShell tripId={tripId}><div className="card">Loading expense form...</div></AppShell>;
@@ -129,7 +149,17 @@ export function AddExpensePage({ tripId }: { tripId: string }) {
         </div>
 
         <div className="field"><label>Notes optional</label><textarea name="notes" placeholder="Rahul paid for Petrol" /></div>
-        <div className="field"><label>Receipt image URL optional</label><input name="receipt_url" /></div>
+        <div className="receiptUpload">
+          <div>
+            <h3>Receipt photo optional</h3>
+            <p className="muted">Take a photo or choose an image from your gallery.</p>
+            <label className="buttonSecondary receiptUploadButton">
+              {receiptPreview ? "Change receipt photo" : "Add receipt photo"}
+              <input accept="image/*" capture="environment" name="receipt" onChange={previewReceipt} type="file" />
+            </label>
+          </div>
+          {receiptPreview ? <img alt="Receipt preview" className="receiptPreview" src={receiptPreview} /> : <div className="receiptPlaceholder">Receipt</div>}
+        </div>
         {message ? <p className="badge pending">{message}</p> : null}
         <button className="button" disabled={saving} type="submit">{saving ? "Saving..." : "Save expense"}</button>
       </form>

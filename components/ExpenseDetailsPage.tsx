@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { formatMoney } from "@/lib/calculations";
@@ -51,7 +50,12 @@ export function ExpenseDetailsPage({ tripId, expenseId }: { tripId: string; expe
             return <div className="card row" key={split.id}><span>{member?.name}</span><b>{formatMoney(Number(split.split_amount), trip.currency)}</b></div>;
           })}
         </div>
-        {expense.receipt_url ? <Link className="buttonSecondary" href={expense.receipt_url}>Open receipt</Link> : null}
+        {expense.receipt_url ? (
+          <div className="receiptDetail">
+            <h3>Receipt photo</h3>
+            <img alt={`${expense.title} receipt`} src={expense.receipt_url} />
+          </div>
+        ) : null}
       </section>
     </AppShell>
   );
