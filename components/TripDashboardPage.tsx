@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { Copy, Plus, Share2 } from "lucide-react";
+import { Copy, Pencil, Plus, Share2, Trash2, X } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { AppShell } from "@/components/AppShell";
 import { calculateBalances, calculateSettlementDrafts, formatMoney } from "@/lib/calculations";
 import { supabase } from "@/lib/supabase";
@@ -15,6 +16,7 @@ type Bundle = {
   splits: ExpenseSplit[];
   settlements: Settlement[];
   currentMemberId: string | null;
+  currentProfileId: string | null;
 };
 
 const categoryImages: Record<string, { icon: string; tone: string }> = {
@@ -32,8 +34,12 @@ function formatExpenseDate(date: string) {
 }
 
 export function TripDashboardPage({ tripId }: { tripId: string }) {
+  const router = useRouter();
   const [bundle, setBundle] = useState<Bundle | null>(null);
   const [message, setMessage] = useState("");
+  const [editingTrip, setEditingTrip] = useState(false);
+  const [savingTrip, setSavingTrip] = useState(false);
+  const [deletingTrip, setDeletingTrip] = useState(false);
 
   useEffect(() => {
     load();
@@ -58,7 +64,8 @@ export function TripDashboardPage({ tripId }: { tripId: string }) {
         expenses: expenses || [],
         splits: splits || [],
         settlements: settlements || [],
-        currentMemberId: currentMember?.id || null
+        currentMemberId: currentMember?.id || null,
+        currentProfileId: profile?.id || null
       });
     }
   }
@@ -71,6 +78,44 @@ export function TripDashboardPage({ tripId }: { tripId: string }) {
     setMessage("Invite link copied. Share this link with your friends.");
   }
 
+  async function updateTrip(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!bundle || savingTrip) return;
+    setSavingTrip(true);
+    const form = new FormData(event.currentTarget);
+    const payload = {
+      name: String(form.get("name") || "").trim(),
+      destination: String(form.get("destination") || "").trim(),
+      start_date: String(form.get("start_date") || "") || null,
+      end_date: String(form.get("end_date") || "") || null,
+      currency: String(form.get("currency") || "INR"),
+      trip_image_url: String(form.get("trip_image_url") || "").trim()
+    };
+    const { data, error } = await supabase.from("trips").update(payload).eq("id", tripId).select("*").single();
+    setSavingTrip(false);
+    if (error || !data) {
+      setMessage(error?.message || "Could not update trip.");
+      return;
+    }
+    setBundle({ ...bundle, trip: data });
+    setEditingTrip(false);
+    setMessage("Trip details updated.");
+  }
+
+  async function deleteTrip() {
+    if (!bundle || deletingTrip) return;
+    const confirmed = window.confirm(`Delete "${bundle.trip.name}"? This removes members, expenses, splits, and settlements.`);
+    if (!confirmed) return;
+    setDeletingTrip(true);
+    const { error } = await supabase.from("trips").delete().eq("id", tripId);
+    setDeletingTrip(false);
+    if (error) {
+      setMessage(error.message || "Could not delete trip.");
+      return;
+    }
+    router.push("/");
+  }
+
   if (!bundle) return <AppShell tripId={tripId}><div className="card">Loading trip...</div></AppShell>;
 
   const balances = calculateBalances(bundle.members, bundle.expenses, bundle.splits);
@@ -78,6 +123,27 @@ export function TripDashboardPage({ tripId }: { tripId: string }) {
   const settlementDrafts = calculateSettlementDrafts(balances, bundle.trip.name);
   const receivers = balances.filter((item) => item.balance > 0.01);
   const payers = balances.filter((item) => item.balance < -0.01);
+  const isTripOwner = Boolean(bundle.currentProfileId && bundle.trip.created_by === bundle.currentProfileId);
+  const categoryTotals = bundle.expenses.reduce<Record<string, number>>((acc, expense) => {
+    acc[expense.category] = (acc[expense.category] || 0) + Number(expense.amount || 0);
+    return acc;
+  }, {});
+  const categoryChart = Object.entries(categoryTotals)
+    .map(([category, amount]) => ({ category, amount, visual: categoryImages[category] || categoryImages.Other }))
+    .sort((a, b) => b.amount - a.amount)
+    .slice(0, 5);
+  const graphStops = categoryChart.length
+    ? categoryChart.reduce<{ stops: string[]; cursor: number }>((acc, item, index) => {
+        const colors = ["#6c63ff", "#22c55e", "#f97316", "#06b6d4", "#ec4899"];
+        const start = acc.cursor;
+        const end = start + (item.amount / total) * 100;
+        acc.stops.push(`${colors[index]} ${start}% ${end}%`);
+        acc.cursor = end;
+        return acc;
+      }, { stops: [], cursor: 0 }).stops.join(", ")
+    : "#eef2f7 0% 100%";
+  const topCategory = categoryChart[0];
+
   return (
     <AppShell tripId={tripId}>
       <section className="cardSoft sectionHead">
@@ -87,10 +153,39 @@ export function TripDashboardPage({ tripId }: { tripId: string }) {
           <p className="muted">Share expenses with friends and settle by UPI QR. Payment confirmation is manual for now.</p>
         </div>
         <div className="cluster">
+          {isTripOwner ? (
+            <>
+              <button className="buttonSecondary" onClick={() => setEditingTrip(true)} type="button"><Pencil size={16} /> Edit Trip</button>
+              <button className="buttonDanger" disabled={deletingTrip} onClick={deleteTrip} type="button"><Trash2 size={16} /> {deletingTrip ? "Deleting..." : "Delete"}</button>
+            </>
+          ) : null}
           <button className="buttonSecondary" onClick={copyInvite} type="button"><Share2 size={16} /> Share Trip</button>
           <Link className="button" href={`/trips/${tripId}/expenses/new`}><Plus size={16} /> Add Expense</Link>
         </div>
       </section>
+
+      {editingTrip ? (
+        <section className="card tripEditPanel">
+          <div className="sectionHead">
+            <div>
+              <p className="kicker">Owner tools</p>
+              <h2>Edit trip details</h2>
+            </div>
+            <button className="iconButton" onClick={() => setEditingTrip(false)} type="button" aria-label="Close edit trip"><X size={18} /></button>
+          </div>
+          <form className="grid" onSubmit={updateTrip}>
+            <div className="grid2">
+              <div className="field"><label>Trip name</label><input name="name" defaultValue={bundle.trip.name} required /></div>
+              <div className="field"><label>Destination</label><input name="destination" defaultValue={bundle.trip.destination || ""} /></div>
+              <div className="field"><label>Start date</label><input name="start_date" type="date" defaultValue={bundle.trip.start_date || ""} /></div>
+              <div className="field"><label>End date</label><input name="end_date" type="date" defaultValue={bundle.trip.end_date || ""} /></div>
+              <div className="field"><label>Currency</label><select name="currency" defaultValue={bundle.trip.currency}><option>INR</option><option>USD</option><option>EUR</option><option>AED</option></select></div>
+              <div className="field"><label>Trip image URL optional</label><input name="trip_image_url" defaultValue={bundle.trip.trip_image_url || ""} /></div>
+            </div>
+            <button className="button" disabled={savingTrip} type="submit">{savingTrip ? "Saving..." : "Save trip"}</button>
+          </form>
+        </section>
+      ) : null}
 
       {message ? <p className="badge paid">{message}</p> : null}
 
@@ -103,6 +198,32 @@ export function TripDashboardPage({ tripId }: { tripId: string }) {
 
       <section className="twoCol" style={{ marginTop: 16 }}>
         <div className="grid">
+          <div className="card expenseInsightCard">
+            <div className="recentExpensesHeader">
+              <h2>Expense Graph</h2>
+              <Link href={`/trips/${tripId}/expenses/new`}>Add</Link>
+            </div>
+            {bundle.expenses.length ? (
+              <div className="expenseInsight">
+                <div className="expenseDonut" style={{ background: `conic-gradient(${graphStops})` }}>
+                  <div>
+                    <span>Total</span>
+                    <b>{formatMoney(total, bundle.trip.currency)}</b>
+                  </div>
+                </div>
+                <div className="expenseLegend">
+                  {categoryChart.map((item, index) => (
+                    <div className="expenseLegendItem" key={item.category}>
+                      <span className={`expenseCategoryImage small ${item.visual.tone}`} aria-hidden="true">{item.visual.icon}</span>
+                      <span><strong>{item.category}</strong><small>{Math.round((item.amount / total) * 100)}% of trip spend</small></span>
+                      <b>{formatMoney(item.amount, bundle.trip.currency)}</b>
+                    </div>
+                  ))}
+                  {topCategory ? <p className="graphMicrocopy">{topCategory.visual.icon} Most money went to {topCategory.category.toLowerCase()}.</p> : null}
+                </div>
+              </div>
+            ) : <div className="empty"><div><h3>No graph yet</h3><p className="muted">Add expenses to see the trip spending graph.</p></div></div>}
+          </div>
           <div className="card recentExpensesCard">
             <div className="recentExpensesHeader">
               <h2>Recent Expenses</h2>

@@ -239,6 +239,17 @@ h3 {
   color: #b42318;
 }
 
+.iconButton {
+  display: inline-grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #ffffff;
+  color: var(--ink);
+}
+
 .buttonGreen {
   background: var(--green-soft);
   color: var(--green);
@@ -816,6 +827,116 @@ textarea:focus {
   background: #eef2f7;
 }
 
+.expenseCategoryImage.small {
+  width: 42px;
+  height: 42px;
+  border-radius: 15px;
+  font-size: 22px;
+}
+
+.tripEditPanel {
+  margin-top: 16px;
+}
+
+.expenseInsightCard {
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 12% 0%, rgba(108, 99, 255, 0.12), transparent 26%),
+    linear-gradient(180deg, #ffffff 0%, #f8f7ff 100%);
+}
+
+.expenseInsight {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 20px;
+  align-items: center;
+}
+
+.expenseDonut {
+  display: grid;
+  width: 220px;
+  aspect-ratio: 1;
+  place-items: center;
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.06), 0 18px 38px rgba(108, 99, 255, 0.16);
+}
+
+.expenseDonut > div {
+  display: grid;
+  width: 130px;
+  aspect-ratio: 1;
+  place-items: center;
+  border-radius: 999px;
+  background: #ffffff;
+  text-align: center;
+}
+
+.expenseDonut span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.expenseDonut b {
+  color: #0b0d14;
+  font-size: 20px;
+  font-weight: 950;
+}
+
+.expenseLegend {
+  display: grid;
+  gap: 10px;
+}
+
+.expenseLegendItem {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.74);
+  padding: 10px;
+}
+
+.expenseLegendItem span:nth-child(2) {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.expenseLegendItem strong,
+.expenseLegendItem small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.expenseLegendItem strong {
+  color: #0b0d14;
+  font-weight: 950;
+}
+
+.expenseLegendItem small {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.expenseLegendItem b {
+  color: #0b0d14;
+  font-weight: 950;
+  white-space: nowrap;
+}
+
+.graphMicrocopy {
+  margin: 2px 0 0;
+  border-radius: 16px;
+  background: #ffffff;
+  color: #6c63ff;
+  padding: 10px 12px;
+  font-weight: 900;
+}
+
 .recentExpenseCopy {
   display: grid;
   gap: 4px;
@@ -1033,6 +1154,23 @@ textarea:focus {
     height: 54px;
     border-radius: 18px;
     font-size: 25px;
+  }
+
+  .expenseInsight {
+    grid-template-columns: 1fr;
+  }
+
+  .expenseDonut {
+    width: min(100%, 220px);
+    margin-inline: auto;
+  }
+
+  .expenseLegendItem {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .expenseLegendItem b {
+    grid-column: 2;
   }
 
   .recentExpensesHeader h2 {

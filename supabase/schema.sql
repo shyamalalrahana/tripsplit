@@ -146,6 +146,16 @@ drop policy if exists "trips update admin" on public.trips;
 create policy "trips update admin" on public.trips
   for update using (public.is_trip_admin(id)) with check (public.is_trip_admin(id));
 
+drop policy if exists "trips delete owner" on public.trips;
+create policy "trips delete owner" on public.trips
+  for delete using (
+    exists (
+      select 1
+      from public.profiles p
+      where p.id = created_by and p.user_id = auth.uid()
+    )
+  );
+
 drop policy if exists "members select trip members or invite" on public.trip_members;
 create policy "members select trip members or invite" on public.trip_members
   for select using (public.is_trip_member(trip_id) or true);
