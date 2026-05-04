@@ -14,3 +14,9 @@ export async function imageFileToDataUrl(file: File | null) {
 export function initials(name: string) {
   return (name || "?").trim().slice(0, 2).toUpperCase();
 }
+
+export function isMissingAvatarColumnError(error: unknown) {
+  if (!error || typeof error !== "object") return false;
+  const message = "message" in error ? String((error as { message?: unknown }).message || "") : "";
+  return message.includes("avatar_url") && message.includes("schema cache");
+}
