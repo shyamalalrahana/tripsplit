@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { AvatarView } from "@/components/AvatarView";
+import { imageFileToDataUrl } from "@/lib/avatar";
 import { supabase } from "@/lib/supabase";
 import type { Profile, Trip } from "@/lib/types";
 
@@ -40,6 +42,14 @@ export function JoinTripPage({ inviteCode }: { inviteCode: string }) {
       setJoining(false);
       return;
     }
+    let avatarUrl = profile?.avatar_url || "";
+    try {
+      avatarUrl = (await imageFileToDataUrl(form.get("avatar") as File | null)) || avatarUrl;
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not upload profile picture.");
+      setJoining(false);
+      return;
+    }
     const guestStorageKey = `tripsplit-member-${trip.id}`;
     const savedGuestMemberId = typeof window !== "undefined" ? window.localStorage.getItem(guestStorageKey) : "";
     if (profile) {
@@ -54,7 +64,8 @@ export function JoinTripPage({ inviteCode }: { inviteCode: string }) {
           name,
           phone: String(form.get("phone") || profile.phone || ""),
           upi_id: String(form.get("upi_id") || profile.upi_id || ""),
-          avatar_color: String(form.get("avatar_color") || profile.avatar_color || "#2563eb")
+          avatar_color: String(form.get("avatar_color") || profile.avatar_color || "#2563eb"),
+          avatar_url: avatarUrl || null
         }).eq("id", existing.id);
         router.push(`/trips/${existing.trip_id}`);
         return;
@@ -70,7 +81,8 @@ export function JoinTripPage({ inviteCode }: { inviteCode: string }) {
           name,
           phone: String(form.get("phone") || ""),
           upi_id: String(form.get("upi_id") || ""),
-          avatar_color: String(form.get("avatar_color") || "#2563eb")
+          avatar_color: String(form.get("avatar_color") || "#2563eb"),
+          avatar_url: avatarUrl || null
         }).eq("id", existingGuest.id);
         router.push(`/trips/${existingGuest.trip_id}`);
         return;
@@ -83,6 +95,7 @@ export function JoinTripPage({ inviteCode }: { inviteCode: string }) {
       phone: String(form.get("phone") || profile?.phone || ""),
       upi_id: String(form.get("upi_id") || profile?.upi_id || ""),
       avatar_color: String(form.get("avatar_color") || profile?.avatar_color || "#2563eb"),
+      avatar_url: avatarUrl || null,
       role: profile ? "member" : "guest"
     }).select("*").single();
     if (error) {
@@ -107,6 +120,10 @@ export function JoinTripPage({ inviteCode }: { inviteCode: string }) {
         </div>
         <form className="card grid" onSubmit={join}>
           <h2>Your trip profile</h2>
+          <div className="field">
+            <label>Profile picture optional</label>
+            <div className="cluster"><AvatarView className="memberAvatar" name={profile?.name || "Friend"} color={profile?.avatar_color} image={profile?.avatar_url} /><input accept="image/*" name="avatar" type="file" /></div>
+          </div>
           <div className="field"><label>Name</label><input name="name" defaultValue={profile?.name || ""} required /></div>
           <div className="field"><label>Phone optional</label><input name="phone" defaultValue={profile?.phone || ""} /></div>
           <div className="field"><label>UPI ID optional</label><input name="upi_id" defaultValue={profile?.upi_id || ""} placeholder="aju@okaxis" /></div>

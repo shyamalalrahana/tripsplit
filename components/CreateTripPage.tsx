@@ -48,6 +48,7 @@ export function CreateTripPage() {
       phone: profile.phone,
       upi_id: profile.upi_id,
       avatar_color: profile.avatar_color,
+      avatar_url: profile.avatar_url,
       role: "owner"
     });
     router.push(`/trips/${trip.id}`);

@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { Pencil, Trash2 } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
+import { AvatarView } from "@/components/AvatarView";
+import { imageFileToDataUrl } from "@/lib/avatar";
 import { calculateBalances, formatMoney } from "@/lib/calculations";
 import { supabase } from "@/lib/supabase";
 import type { Expense, ExpenseSplit, Trip, TripMember } from "@/lib/types";
@@ -38,24 +40,28 @@ export function MembersPage({ tripId }: { tripId: string }) {
     setMessage("");
     setSavingMemberId(member.id);
     const form = new FormData(event.currentTarget);
+    let avatarUrl = member.avatar_url || "";
+    try {
+      avatarUrl = (await imageFileToDataUrl(form.get("avatar") as File | null)) || avatarUrl;
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not upload profile picture.");
+      setSavingMemberId(null);
+      return;
+    }
     const payload = {
       name: String(form.get("name") || ""),
       phone: String(form.get("phone") || ""),
-      avatar_color: String(form.get("avatar_color") || "#2563eb")
+      avatar_color: String(form.get("avatar_color") || "#2563eb"),
+      avatar_url: avatarUrl || null
     };
-    const { data, error } = await supabase.from("trip_members").update(payload).eq("id", member.id).select("*").single();
+    const { error } = await supabase.from("trip_members").update(payload).eq("id", member.id);
     if (error) {
       setMessage(error.message);
       setSavingMemberId(null);
       return;
     }
-    if (!data) {
-      setMessage("Profile was not updated. Please check member permissions in Supabase.");
-      setSavingMemberId(null);
-      return;
-    }
-    setMembers((current) => current.map((item) => (item.id === member.id ? data : item)));
-    setMessage(`${data.name} profile updated.`);
+    setMembers((current) => current.map((item) => (item.id === member.id ? { ...item, ...payload } : item)));
+    setMessage(`${payload.name} profile updated.`);
     setEditingMemberId(null);
     setSavingMemberId(null);
     load();
@@ -99,7 +105,7 @@ export function MembersPage({ tripId }: { tripId: string }) {
           return (
             <form className="memberCard grid" onSubmit={(event) => updateMember(event, member)} key={member.id}>
               <div className="memberHero">
-                <span className="memberAvatar" style={{ background: member.avatar_color || "#2563eb" }}>{member.name.slice(0, 2).toUpperCase()}</span>
+                <AvatarView className="memberAvatar" name={member.name} color={member.avatar_color} image={member.avatar_url} />
                 <div>
                   <h3>{member.name}</h3>
                   <p className="muted">{member.role === "owner" ? "Trip owner" : member.role === "guest" ? "Joined by invite" : "Trip member"}</p>
@@ -111,6 +117,7 @@ export function MembersPage({ tripId }: { tripId: string }) {
               {isEditing ? (
                 <>
                   <div className="grid2">
+                    <div className="field"><label>Profile picture</label><input accept="image/*" name="avatar" type="file" /></div>
                     <div className="field"><label>Name</label><input name="name" defaultValue={member.name} required /></div>
                     <div className="field"><label>Phone</label><input name="phone" defaultValue={member.phone || ""} /></div>
                     <div className="field"><label>Avatar color</label><input name="avatar_color" defaultValue={member.avatar_color || "#2563eb"} /></div>

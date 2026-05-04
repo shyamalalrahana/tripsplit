@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { imageFileToDataUrl } from "@/lib/avatar";
 import { hasSupabaseEnv, supabase } from "@/lib/supabase";
 
 export function AuthPage() {
@@ -30,11 +31,21 @@ export function AuthPage() {
     }
 
     if (mode === "signup" && result.data.user) {
+      const form = new FormData(event.currentTarget as HTMLFormElement);
+      let avatarUrl = "";
+      try {
+        avatarUrl = await imageFileToDataUrl(form.get("avatar") as File | null);
+      } catch (error) {
+        setMessage(error instanceof Error ? error.message : "Could not upload profile picture.");
+        setLoading(false);
+        return;
+      }
       await supabase.from("profiles").upsert({
         user_id: result.data.user.id,
         email,
         name: name || email.split("@")[0],
-        avatar_color: "#2563eb"
+        avatar_color: "#2563eb",
+        avatar_url: avatarUrl || null
       }, { onConflict: "user_id" });
     }
     router.push("/");
@@ -61,10 +72,16 @@ export function AuthPage() {
             <div className="badge pending">Add Supabase env vars before login works</div>
           ) : null}
           {mode === "signup" ? (
-            <div className="field">
-              <label>Name</label>
-              <input value={name} onChange={(event) => setName(event.target.value)} placeholder="Rahul" />
-            </div>
+            <>
+              <div className="field">
+                <label>Name</label>
+                <input value={name} onChange={(event) => setName(event.target.value)} placeholder="Rahul" />
+              </div>
+              <div className="field">
+                <label>Profile picture optional</label>
+                <input accept="image/*" name="avatar" type="file" />
+              </div>
+            </>
           ) : null}
           <div className="field">
             <label>Email</label>

@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { AppShell } from "@/components/AppShell";
+import { AvatarView } from "@/components/AvatarView";
+import { imageFileToDataUrl } from "@/lib/avatar";
 import { supabase } from "@/lib/supabase";
 import type { Profile } from "@/lib/types";
 
@@ -27,11 +29,19 @@ export function ProfilePage() {
     event.preventDefault();
     if (!profile) return;
     const form = new FormData(event.currentTarget);
+    let avatarUrl = profile.avatar_url || "";
+    try {
+      avatarUrl = (await imageFileToDataUrl(form.get("avatar") as File | null)) || avatarUrl;
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not upload profile picture.");
+      return;
+    }
     const payload = {
       name: String(form.get("name") || ""),
       phone: String(form.get("phone") || ""),
       upi_id: String(form.get("upi_id") || ""),
-      avatar_color: String(form.get("avatar_color") || "#2563eb")
+      avatar_color: String(form.get("avatar_color") || "#2563eb"),
+      avatar_url: avatarUrl || null
     };
     const { data, error } = await supabase.from("profiles").update(payload).eq("id", profile.id).select("*").single();
     if (error) setMessage(error.message);
@@ -51,6 +61,10 @@ export function ProfilePage() {
         </div>
         {profile ? (
           <form className="grid2" onSubmit={save}>
+            <div className="field">
+              <label>Profile picture</label>
+              <div className="cluster"><AvatarView className="memberAvatar" name={profile.name} color={profile.avatar_color} image={profile.avatar_url} /><input accept="image/*" name="avatar" type="file" /></div>
+            </div>
             <div className="field"><label>Name</label><input name="name" defaultValue={profile.name} required /></div>
             <div className="field"><label>Phone optional</label><input name="phone" defaultValue={profile.phone || ""} /></div>
             <div className="field"><label>UPI ID optional</label><input name="upi_id" defaultValue={profile.upi_id || ""} placeholder="rahul@okicici" /></div>

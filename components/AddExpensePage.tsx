@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { AvatarView } from "@/components/AvatarView";
 import { AppShell } from "@/components/AppShell";
 import { buildExpenseSplits, validateSplits } from "@/lib/expense";
 import { supabase } from "@/lib/supabase";
@@ -107,7 +108,7 @@ export function AddExpensePage({ tripId }: { tripId: string }) {
                   onChange={(event) => setSelected(event.target.checked ? [...selected, member.id] : selected.filter((id) => id !== member.id))}
                   type="checkbox"
                 />
-                <span className="splitAvatar" style={{ background: member.avatar_color || "#2563eb" }}>{member.name.slice(0, 2).toUpperCase()}</span>
+                <AvatarView className="splitAvatar" name={member.name} color={member.avatar_color} image={member.avatar_url} />
                 <span className="splitMemberText">
                   <strong>{member.name}</strong>
                   <small>{selected.includes(member.id) ? "Included in split" : "Not included"}</small>

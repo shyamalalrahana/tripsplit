@@ -8,8 +8,11 @@ create table if not exists public.profiles (
   phone text,
   upi_id text,
   avatar_color text default '#2563eb',
+  avatar_url text,
   created_at timestamptz default now()
 );
+
+alter table public.profiles add column if not exists avatar_url text;
 
 create table if not exists public.trips (
   id uuid primary key default gen_random_uuid(),
@@ -32,10 +35,13 @@ create table if not exists public.trip_members (
   phone text,
   upi_id text,
   avatar_color text default '#2563eb',
+  avatar_url text,
   role text not null default 'member' check (role in ('owner', 'admin', 'member', 'guest')),
   joined_at timestamptz default now(),
   unique(trip_id, profile_id)
 );
+
+alter table public.trip_members add column if not exists avatar_url text;
 
 create table if not exists public.expenses (
   id uuid primary key default gen_random_uuid(),

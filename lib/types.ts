@@ -6,6 +6,7 @@ export type Profile = {
   phone: string | null;
   upi_id: string | null;
   avatar_color: string | null;
+  avatar_url: string | null;
 };
 
 export type Trip = {
@@ -28,6 +29,7 @@ export type TripMember = {
   phone: string | null;
   upi_id: string | null;
   avatar_color: string | null;
+  avatar_url: string | null;
   role: "owner" | "admin" | "member" | "guest";
 };
 
