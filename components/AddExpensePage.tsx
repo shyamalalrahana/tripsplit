@@ -103,7 +103,8 @@ export function AddExpensePage({ tripId }: { tripId: string }) {
         return;
       }
     }
-    router.push(`/trips/${tripId}`);
+    router.replace(`/trips/${tripId}`);
+    router.refresh();
   }
 
   async function previewReceipt(event: React.ChangeEvent<HTMLInputElement>) {
