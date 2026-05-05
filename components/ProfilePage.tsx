@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { AvatarView } from "@/components/AvatarView";
+import { LoadingCard } from "@/components/LoadingCard";
 import { imageFileToDataUrl, isMissingAvatarColumnError } from "@/lib/avatar";
 import { supabase } from "@/lib/supabase";
 import type { Profile } from "@/lib/types";
@@ -110,7 +111,7 @@ export function ProfilePage() {
             <button className="button" disabled={saving} type="submit">{saving ? "Saving..." : "Save profile"}</button>
             {message ? <p className="profileMessage">{message}</p> : null}
           </form>
-        ) : <p>Loading...</p>}
+        ) : <LoadingCard label="Loading profile" />}
       </section>
     </AppShell>
   );

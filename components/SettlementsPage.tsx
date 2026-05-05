@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { AppShell } from "@/components/AppShell";
+import { LoadingCard } from "@/components/LoadingCard";
 import { calculateBalances, calculateSettlementDrafts, formatMoney, mergeSettlementStatus } from "@/lib/calculations";
 import { supabase } from "@/lib/supabase";
 import type { Expense, ExpenseSplit, Settlement, Trip, TripMember } from "@/lib/types";
@@ -46,7 +47,7 @@ export function SettlementsPage({ tripId }: { tripId: string }) {
     load();
   }
 
-  if (!trip) return <AppShell tripId={tripId}><div className="card">Loading settlement...</div></AppShell>;
+  if (!trip) return <AppShell tripId={tripId}><LoadingCard label="Loading settlement" /></AppShell>;
   const balances = calculateBalances(members, expenses, splits);
   const drafts = mergeSettlementStatus(calculateSettlementDrafts(balances, trip.name), settlements);
 

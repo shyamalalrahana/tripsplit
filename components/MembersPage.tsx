@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Pencil, Trash2 } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { AvatarView } from "@/components/AvatarView";
+import { LoadingCard } from "@/components/LoadingCard";
 import { imageFileToDataUrl } from "@/lib/avatar";
 import { calculateBalances, formatMoney } from "@/lib/calculations";
 import { supabase } from "@/lib/supabase";
@@ -88,7 +89,7 @@ export function MembersPage({ tripId }: { tripId: string }) {
     load();
   }
 
-  if (!trip) return <AppShell tripId={tripId}><div className="card">Loading members...</div></AppShell>;
+  if (!trip) return <AppShell tripId={tripId}><LoadingCard label="Loading members" /></AppShell>;
   const balances = calculateBalances(members, expenses, splits);
 
   return (

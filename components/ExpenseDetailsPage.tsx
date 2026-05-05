@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { AppShell } from "@/components/AppShell";
+import { LoadingCard } from "@/components/LoadingCard";
 import { formatMoney } from "@/lib/calculations";
 import { supabase } from "@/lib/supabase";
 import type { Expense, ExpenseSplit, Trip, TripMember } from "@/lib/types";
@@ -34,7 +35,7 @@ export function ExpenseDetailsPage({ tripId, expenseId }: { tripId: string; expe
     window.location.href = `/trips/${tripId}`;
   }
 
-  if (!trip || !expense) return <AppShell tripId={tripId}><div className="card">Loading expense...</div></AppShell>;
+  if (!trip || !expense) return <AppShell tripId={tripId}><LoadingCard label="Loading expense" /></AppShell>;
   const payer = members.find((member) => member.id === expense.paid_by_member_id);
 
   return (

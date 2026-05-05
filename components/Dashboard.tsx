@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ExternalLink, Pencil, Trash2, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { AppShell } from "@/components/AppShell";
+import { LoadingCard } from "@/components/LoadingCard";
 import { supabase } from "@/lib/supabase";
 import type { Profile, Trip } from "@/lib/types";
 
@@ -109,7 +110,7 @@ export function Dashboard() {
       {message ? <p className="badge paid">{message}</p> : null}
 
       <div className="grid">
-        {loading ? <div className="card">Loading trips...</div> : null}
+        {loading ? <LoadingCard label="Loading trips" /> : null}
         {!loading && !trips.length ? (
           <div className="card empty">
             <div>

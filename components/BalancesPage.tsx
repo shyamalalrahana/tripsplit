@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { AppShell } from "@/components/AppShell";
+import { LoadingCard } from "@/components/LoadingCard";
 import { calculateBalances, formatMoney } from "@/lib/calculations";
 import { supabase } from "@/lib/supabase";
 import type { Expense, ExpenseSplit, Trip, TripMember } from "@/lib/types";
@@ -28,7 +29,7 @@ export function BalancesPage({ tripId }: { tripId: string }) {
     setSplits(splitsData || []);
   }
 
-  if (!trip) return <AppShell tripId={tripId}><div className="card">Loading balances...</div></AppShell>;
+  if (!trip) return <AppShell tripId={tripId}><LoadingCard label="Loading balances" /></AppShell>;
   const balances = calculateBalances(members, expenses, splits);
 
   return (
@@ -36,18 +37,24 @@ export function BalancesPage({ tripId }: { tripId: string }) {
       <section className="sectionHead">
         <div><p className="kicker">Balances</p><h1>Who owes what</h1><p className="muted">Positive means receive money. Negative means pay money.</p></div>
       </section>
-      <div className="grid2">
+      <div className="balanceList">
         {balances.map((item) => (
-          <article className="card grid" key={item.member.id}>
-            <div className="row">
-              <div className="cluster"><span className="avatar" style={{ background: item.member.avatar_color || "#2563eb" }}>{item.member.name.slice(0, 2).toUpperCase()}</span><h3>{item.member.name}</h3></div>
-              <span className={`badge ${item.balance > 0 ? "receive" : item.balance < 0 ? "owe" : "settled"}`}>{item.balance > 0 ? "Will receive" : item.balance < 0 ? "Owes money" : "Settled"}</span>
+          <article className="card balanceCard" key={item.member.id}>
+            <div className="balanceMain">
+              <div className="balancePerson">
+                <span className="avatar balanceAvatar" style={{ background: item.member.avatar_color || "#2563eb" }}>{item.member.name.slice(0, 2).toUpperCase()}</span>
+                <div>
+                  <h3>{item.member.name}</h3>
+                  <span className={`badge ${item.balance > 0 ? "receive" : item.balance < 0 ? "owe" : "settled"}`}>{item.balance > 0 ? "Receive" : item.balance < 0 ? "Owes" : "Settled"}</span>
+                </div>
+              </div>
+              <strong className={`balanceAmount ${item.balance > 0 ? "positive" : item.balance < 0 ? "negative" : ""}`}>
+                {item.balance < 0 ? "-" : ""}{formatMoney(Math.abs(item.balance), trip.currency)}
+              </strong>
             </div>
-            <h2>{item.balance < 0 ? "-" : ""}{formatMoney(Math.abs(item.balance), trip.currency)}</h2>
-            <div className="grid3">
-              <div><p className="muted">Paid</p><b>{formatMoney(item.paid, trip.currency)}</b></div>
-              <div><p className="muted">Share</p><b>{formatMoney(item.share, trip.currency)}</b></div>
-              <div><p className="muted">Balance</p><b>{formatMoney(item.balance, trip.currency)}</b></div>
+            <div className="balanceMiniGrid">
+              <span>Paid <b>{formatMoney(item.paid, trip.currency)}</b></span>
+              <span>Share <b>{formatMoney(item.share, trip.currency)}</b></span>
             </div>
           </article>
         ))}

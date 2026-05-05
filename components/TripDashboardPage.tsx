@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Copy, Plus, Share2, TrendingDown, TrendingUp, Users, WalletCards } from "lucide-react";
 import { useEffect, useState } from "react";
 import { AppShell } from "@/components/AppShell";
+import { LoadingCard } from "@/components/LoadingCard";
 import { calculateBalances, calculateSettlementDrafts, formatMoney } from "@/lib/calculations";
 import { supabase } from "@/lib/supabase";
 import type { Expense, ExpenseSplit, Settlement, Trip, TripMember } from "@/lib/types";
@@ -71,7 +72,7 @@ export function TripDashboardPage({ tripId }: { tripId: string }) {
     setMessage("Invite link copied. Share this link with your friends.");
   }
 
-  if (!bundle) return <AppShell tripId={tripId}><div className="card">Loading trip...</div></AppShell>;
+  if (!bundle) return <AppShell tripId={tripId}><LoadingCard label="Loading trip" /></AppShell>;
 
   const balances = calculateBalances(bundle.members, bundle.expenses, bundle.splits);
   const total = bundle.expenses.reduce((sum, expense) => sum + Number(expense.amount), 0);

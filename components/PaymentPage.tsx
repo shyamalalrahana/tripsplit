@@ -3,6 +3,7 @@
 import { QRCodeSVG } from "qrcode.react";
 import { useEffect, useState } from "react";
 import { AppShell } from "@/components/AppShell";
+import { LoadingCard } from "@/components/LoadingCard";
 import { formatMoney } from "@/lib/calculations";
 import { supabase } from "@/lib/supabase";
 import type { Settlement, Trip, TripMember } from "@/lib/types";
@@ -40,7 +41,7 @@ export function PaymentPage({ tripId, settlementId }: { tripId: string; settleme
     load();
   }
 
-  if (!trip || !settlement || !from || !to) return <AppShell tripId={tripId}><div className="card">Loading payment...</div></AppShell>;
+  if (!trip || !settlement || !from || !to) return <AppShell tripId={tripId}><LoadingCard label="Loading payment" /></AppShell>;
 
   const note = settlement.payment_note || `TripSplit - ${trip.name}`;
   const upiLink = to.upi_id

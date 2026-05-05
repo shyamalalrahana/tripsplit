@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AvatarView } from "@/components/AvatarView";
 import { AppShell } from "@/components/AppShell";
+import { LoadingCard } from "@/components/LoadingCard";
 import { imageFileToDataUrl } from "@/lib/avatar";
 import { buildExpenseSplits, validateSplits } from "@/lib/expense";
 import { supabase } from "@/lib/supabase";
@@ -101,7 +102,7 @@ export function AddExpensePage({ tripId }: { tripId: string }) {
     }
   }
 
-  if (!trip) return <AppShell tripId={tripId}><div className="card">Loading expense form...</div></AppShell>;
+  if (!trip) return <AppShell tripId={tripId}><LoadingCard label="Loading expense form" /></AppShell>;
 
   return (
     <AppShell tripId={tripId}>

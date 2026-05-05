@@ -375,6 +375,31 @@ textarea:focus {
   font-weight: 900;
 }
 
+.loadingCard {
+  display: flex;
+  min-height: 86px;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: var(--muted);
+  font-weight: 900;
+}
+
+.loadingSpinner {
+  width: 22px;
+  height: 22px;
+  border: 3px solid #e5e7eb;
+  border-top-color: var(--blue);
+  border-radius: 999px;
+  animation: spin 0.75s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .receive {
   background: var(--green-soft);
   color: var(--green);
@@ -394,6 +419,90 @@ textarea:focus {
 .paid {
   background: var(--blue-soft);
   color: var(--blue);
+}
+
+.balanceList {
+  display: grid;
+  gap: 10px;
+}
+
+.balanceCard {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+}
+
+.balanceMain {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+}
+
+.balancePerson {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+  min-width: 0;
+}
+
+.balancePerson h3 {
+  overflow: hidden;
+  margin-bottom: 5px;
+  font-size: 17px;
+  line-height: 1.1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.balanceAvatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  font-size: 14px;
+}
+
+.balanceAmount {
+  color: #0f0f13;
+  font-size: 22px;
+  font-weight: 950;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.balanceAmount.positive {
+  color: var(--green);
+}
+
+.balanceAmount.negative {
+  color: var(--orange);
+}
+
+.balanceMiniGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.balanceMiniGrid span {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  border: 0.5px solid rgba(15, 23, 42, 0.08);
+  border-radius: 12px;
+  background: #fafafa;
+  color: var(--muted);
+  padding: 8px 10px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.balanceMiniGrid b {
+  color: #0f0f13;
+  font-size: 12px;
+  white-space: nowrap;
 }
 
 .avatar {
@@ -1738,6 +1847,65 @@ textarea:focus {
   }
 
   .recentExpenseMoney small {
+    font-size: 10px;
+  }
+
+  .loadingCard {
+    min-height: 70px;
+    font-size: 13px;
+  }
+
+  .loadingSpinner {
+    width: 18px;
+    height: 18px;
+    border-width: 2px;
+  }
+
+  .balanceList {
+    gap: 8px;
+  }
+
+  .balanceCard {
+    gap: 10px;
+    border: 0.5px solid rgba(15, 23, 42, 0.08);
+    border-radius: 14px;
+    padding: 10px;
+  }
+
+  .balanceMain {
+    gap: 8px;
+  }
+
+  .balancePerson {
+    gap: 8px;
+  }
+
+  .balancePerson h3 {
+    font-size: 14px;
+  }
+
+  .balanceAvatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 12px;
+    font-size: 12px;
+  }
+
+  .balanceAmount {
+    font-size: 16px;
+  }
+
+  .balanceMiniGrid {
+    gap: 6px;
+  }
+
+  .balanceMiniGrid span {
+    border-radius: 10px;
+    padding: 6px 7px;
+    font-size: 10px;
+  }
+
+  .balanceMiniGrid b {
     font-size: 10px;
   }
 }
