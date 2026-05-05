@@ -579,7 +579,7 @@ textarea:focus {
   left: max(8px, env(safe-area-inset-left));
   z-index: 30;
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
   gap: 4px;
   border: 1px solid rgba(208, 213, 221, 0.85);
   border-radius: 18px;
@@ -590,12 +590,15 @@ textarea:focus {
   backdrop-filter: blur(18px);
 }
 
-.bottomNav a {
+.bottomNav a,
+.installNavButton {
   position: relative;
   display: grid;
   place-items: center;
   border-radius: 13px;
   padding: 8px 4px;
+  border: 0;
+  background: transparent;
   color: #344054;
   font-size: 11px;
   font-weight: 900;
@@ -614,6 +617,41 @@ textarea:focus {
   max-width: 100%;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.installNavButton span {
+  overflow: hidden;
+  max-width: 100%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.installNavSlot {
+  position: relative;
+  display: grid;
+  min-width: 0;
+}
+
+.installNavButton {
+  width: 100%;
+  height: 100%;
+  color: #6c63ff;
+}
+
+.installHint {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 10px);
+  z-index: 60;
+  width: min(230px, 70vw);
+  border-radius: 14px;
+  background: #0f172a;
+  color: #ffffff;
+  padding: 10px 12px;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.35;
+  box-shadow: 0 16px 34px rgba(15, 23, 42, 0.22);
 }
 
 .profileMenu {
@@ -1715,7 +1753,7 @@ textarea:focus {
   bottom: 0;
   left: env(safe-area-inset-left);
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
   border: 0;
   border-top: 0.5px solid rgba(0, 0, 0, 0.08);
   border-radius: 0;
@@ -1724,12 +1762,17 @@ textarea:focus {
   padding: 9px 6px max(18px, calc(14px + env(safe-area-inset-bottom)));
 }
 
-.bottomNav a {
+.bottomNav a,
+.installNavButton {
   gap: 4px;
   color: #aaa;
   min-height: 56px;
   padding: 5px 2px 7px;
   touch-action: manipulation;
+}
+
+.installNavButton {
+  color: #6c63ff;
 }
 
 .bottomNav a::before {
@@ -2172,8 +2215,17 @@ html[data-theme="dark"] .bottomNav a {
   color: #858b9d;
 }
 
+html[data-theme="dark"] .installNavButton {
+  color: #a78bfa;
+}
+
 html[data-theme="dark"] .bottomNav a.active {
   color: #a78bfa;
+}
+
+html[data-theme="dark"] .installHint {
+  background: #f8fafc;
+  color: #111827;
 }
 
 html[data-theme="dark"] .stat {

@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { LogOut, Plus, ReceiptText, Scale, UserRound, Users, WalletCards } from "lucide-react";
 import { AvatarView } from "@/components/AvatarView";
+import { InstallAppButton } from "@/components/InstallAppButton";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { supabase } from "@/lib/supabase";
 import type { Profile } from "@/lib/types";
@@ -100,6 +101,7 @@ export function AppShell({
               </Link>
             );
           })}
+          <InstallAppButton />
         </nav>
       ) : null}
     </div>
