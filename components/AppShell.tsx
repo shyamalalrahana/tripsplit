@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { LogOut, Plus, ReceiptText, Scale, UserRound, Users, WalletCards } from "lucide-react";
 import { AvatarView } from "@/components/AvatarView";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { supabase } from "@/lib/supabase";
 import type { Profile } from "@/lib/types";
 
@@ -61,26 +62,29 @@ export function AppShell({
             <span className="brandSub">Trip Money Manager</span>
           </span>
         </Link>
-        <div className="profileMenu">
-          <button className="profileButton" onClick={() => setMenuOpen((open) => !open)} type="button" aria-expanded={menuOpen} aria-label="Open profile menu">
-            <AvatarView className="profileButtonAvatar" name={profile?.name || "User"} color={profile?.avatar_color} image={profile?.avatar_url} />
-            <span className="profileButtonText">
-              <strong>{profile?.name || "Profile"}</strong>
-              <small>Account</small>
-            </span>
-          </button>
-          {menuOpen ? (
-            <div className="profileDropdown">
-              <Link className="profileDropdownItem" href="/profile" onClick={() => setMenuOpen(false)}>
-                <UserRound size={17} />
-                <span>Profile</span>
-              </Link>
-              <button className="profileDropdownItem dangerText" onClick={logout} type="button">
-                <LogOut size={17} />
-                <span>Logout</span>
-              </button>
-            </div>
-          ) : null}
+        <div className="topActions">
+          <ThemeToggle />
+          <div className="profileMenu">
+            <button className="profileButton" onClick={() => setMenuOpen((open) => !open)} type="button" aria-expanded={menuOpen} aria-label="Open profile menu">
+              <AvatarView className="profileButtonAvatar" name={profile?.name || "User"} color={profile?.avatar_color} image={profile?.avatar_url} />
+              <span className="profileButtonText">
+                <strong>{profile?.name || "Profile"}</strong>
+                <small>Account</small>
+              </span>
+            </button>
+            {menuOpen ? (
+              <div className="profileDropdown">
+                <Link className="profileDropdownItem" href="/profile" onClick={() => setMenuOpen(false)}>
+                  <UserRound size={17} />
+                  <span>Profile</span>
+                </Link>
+                <button className="profileDropdownItem dangerText" onClick={logout} type="button">
+                  <LogOut size={17} />
+                  <span>Logout</span>
+                </button>
+              </div>
+            ) : null}
+          </div>
         </div>
       </header>
       <main className="page">{children}</main>

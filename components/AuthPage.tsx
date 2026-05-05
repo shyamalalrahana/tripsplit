@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { imageFileToDataUrl } from "@/lib/avatar";
 import { hasSupabaseEnv, supabase } from "@/lib/supabase";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export function AuthPage() {
   const router = useRouter();
@@ -55,6 +56,9 @@ export function AuthPage() {
 
   return (
     <main className="page">
+      <div className="authThemeAction">
+        <ThemeToggle />
+      </div>
       <section className="heroGrid">
         <div className="cardSoft">
           <Image className="authLogo" src="/tripsplits-logo.png" alt="TripSplits.in" width={620} height={150} priority />
