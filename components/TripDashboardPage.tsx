@@ -168,7 +168,7 @@ export function TripDashboardPage({ tripId }: { tripId: string }) {
           <div className="card recentExpensesCard">
             <div className="recentExpensesHeader">
               <h2>Recent Expenses</h2>
-              <Link href={`/trips/${tripId}/expenses/new`}>All</Link>
+              <Link href={`/trips/${tripId}/expenses`}>All</Link>
             </div>
             {bundle.expenses.length ? (
               <div className="recentExpenseRows">
