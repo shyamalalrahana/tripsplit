@@ -66,9 +66,7 @@ export function AddExpensePage({ tripId }: { tripId: string }) {
       setSaving(false);
       return;
     }
-    const { data: auth } = await supabase.auth.getUser();
-    const { data: profile } = auth.user ? await supabase.from("profiles").select("*").eq("user_id", auth.user.id).single() : { data: null };
-    const { data: expense, error } = await supabase.from("expenses").insert({
+    const expensePayload = {
       trip_id: tripId,
       title: String(form.get("title")),
       amount,
@@ -76,21 +74,35 @@ export function AddExpensePage({ tripId }: { tripId: string }) {
       paid_by_member_id: String(form.get("paid_by_member_id")),
       expense_date: String(form.get("expense_date")),
       notes: String(form.get("notes") || ""),
-      receipt_url: receiptUrl || "",
-      created_by: profile?.id || null
-    }).select("*").single();
-    if (error || !expense) {
-      setMessage(error?.message || "Could not save expense.");
-      setSaving(false);
-      return;
+      receipt_url: receiptUrl || ""
+    };
+    const rpcResult = await supabase.rpc("add_trip_expense", {
+      expense_input: expensePayload,
+      split_input: splits
+    });
+    if (rpcResult.error) {
+      if (rpcResult.error.message.includes("Could not find the function")) {
+        const { data: auth } = await supabase.auth.getUser();
+        const { data: profile } = auth.user ? await supabase.from("profiles").select("id").eq("user_id", auth.user.id).single() : { data: null };
+        const { data: expense, error } = await supabase.from("expenses").insert({ ...expensePayload, created_by: profile?.id || null }).select("*").single();
+        if (error || !expense) {
+          setMessage(error?.message || "Could not save expense.");
+          setSaving(false);
+          return;
+        }
+        const splitResult = await supabase.from("expense_splits").insert(splits.map((split) => ({ ...split, expense_id: expense.id })));
+        if (splitResult.error) {
+          setMessage(splitResult.error.message);
+          setSaving(false);
+          return;
+        }
+        await supabase.from("settlements").delete().eq("trip_id", tripId);
+      } else {
+        setMessage(rpcResult.error.message || "Could not save expense.");
+        setSaving(false);
+        return;
+      }
     }
-    const splitResult = await supabase.from("expense_splits").insert(splits.map((split) => ({ ...split, expense_id: expense.id })));
-    if (splitResult.error) {
-      setMessage(splitResult.error.message);
-      setSaving(false);
-      return;
-    }
-    await supabase.from("settlements").delete().eq("trip_id", tripId);
     router.push(`/trips/${tripId}`);
   }
 
