@@ -524,7 +524,7 @@ textarea:focus {
 .bottomNav {
   position: fixed;
   right: 12px;
-  bottom: 12px;
+  bottom: max(12px, env(safe-area-inset-bottom));
   left: 12px;
   z-index: 30;
   display: none;
@@ -535,6 +535,7 @@ textarea:focus {
   background: rgba(255, 255, 255, 0.95);
   box-shadow: 0 18px 42px rgba(16, 24, 40, 0.16);
   padding: 6px;
+  padding-bottom: max(6px, env(safe-area-inset-bottom));
   backdrop-filter: blur(18px);
 }
 
@@ -548,12 +549,20 @@ textarea:focus {
   font-size: 11px;
   font-weight: 900;
   transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+  min-width: 0;
 }
 
 .bottomNav a.active {
   background: var(--blue);
   color: white;
   transform: translateY(-1px);
+}
+
+.bottomNav a span {
+  overflow: hidden;
+  max-width: 100%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .profileMenu {
@@ -1660,7 +1669,7 @@ textarea:focus {
   border-radius: 0;
   background: #ffffff;
   box-shadow: none;
-  padding: 10px 4px 18px;
+  padding: 10px 4px max(18px, calc(14px + env(safe-area-inset-bottom)));
 }
 
 .bottomNav a {
@@ -1743,7 +1752,7 @@ textarea:focus {
 
   .page {
     width: 100%;
-    padding: 14px 0 88px;
+    padding: 14px 0 max(104px, calc(92px + env(safe-area-inset-bottom)));
   }
 
   .page > *:not(.cardSoft) {
