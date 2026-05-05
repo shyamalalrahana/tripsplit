@@ -488,7 +488,7 @@ textarea:focus {
 .balanceMiniGrid span {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 8px;
   border: 0.5px solid rgba(15, 23, 42, 0.08);
   border-radius: 12px;
@@ -499,7 +499,13 @@ textarea:focus {
   font-weight: 800;
 }
 
+.balanceMiniGrid svg {
+  flex: 0 0 auto;
+  color: #6c63ff;
+}
+
 .balanceMiniGrid b {
+  margin-left: auto;
   color: #0f0f13;
   font-size: 12px;
   white-space: nowrap;
@@ -1866,33 +1872,33 @@ textarea:focus {
   }
 
   .balanceCard {
-    gap: 10px;
+    gap: 11px;
     border: 0.5px solid rgba(15, 23, 42, 0.08);
-    border-radius: 14px;
-    padding: 10px;
+    border-radius: 16px;
+    padding: 12px;
   }
 
   .balanceMain {
-    gap: 8px;
+    gap: 10px;
   }
 
   .balancePerson {
-    gap: 8px;
+    gap: 9px;
   }
 
   .balancePerson h3 {
-    font-size: 14px;
+    font-size: 15px;
   }
 
   .balanceAvatar {
-    width: 34px;
-    height: 34px;
+    width: 38px;
+    height: 38px;
     border-radius: 12px;
     font-size: 12px;
   }
 
   .balanceAmount {
-    font-size: 16px;
+    font-size: 18px;
   }
 
   .balanceMiniGrid {
@@ -1901,11 +1907,16 @@ textarea:focus {
 
   .balanceMiniGrid span {
     border-radius: 10px;
-    padding: 6px 7px;
-    font-size: 10px;
+    padding: 7px 8px;
+    font-size: 11px;
   }
 
   .balanceMiniGrid b {
-    font-size: 10px;
+    font-size: 11px;
+  }
+
+  .balanceMiniGrid svg {
+    width: 13px;
+    height: 13px;
   }
 }

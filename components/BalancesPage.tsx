@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { ReceiptText, Users } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { LoadingCard } from "@/components/LoadingCard";
 import { calculateBalances, formatMoney } from "@/lib/calculations";
@@ -58,8 +59,8 @@ export function BalancesPage({ tripId }: { tripId: string }) {
               </strong>
             </div>
             <div className="balanceMiniGrid">
-              <span>Paid <b>{formatMoney(item.paid, trip.currency)}</b></span>
-              <span>Share <b>{formatMoney(item.share, trip.currency)}</b></span>
+              <span><ReceiptText size={14} /> Paid <b>{formatMoney(item.paid, trip.currency)}</b></span>
+              <span><Users size={14} /> Share <b>{formatMoney(item.share, trip.currency)}</b></span>
             </div>
           </article>
         ))}
