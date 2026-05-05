@@ -120,8 +120,13 @@ export function AddExpensePage({ tripId }: { tripId: string }) {
         </div>
 
         <div className="splitPanel grid">
-          <h3>Split between selected members</h3>
-          <p className="muted">{splitHint}</p>
+          <div className="splitPanelHeader">
+            <div>
+              <h3>Split members</h3>
+              <p className="muted">{splitHint}</p>
+            </div>
+            <span>{selected.length}/{members.length}</span>
+          </div>
           <div className="splitMemberGrid">
             {members.map((member) => (
               <label className={`splitMemberOption ${selected.includes(member.id) ? "selected" : ""}`} key={member.id}>
@@ -131,10 +136,11 @@ export function AddExpensePage({ tripId }: { tripId: string }) {
                   onChange={(event) => setSelected(event.target.checked ? [...selected, member.id] : selected.filter((id) => id !== member.id))}
                   type="checkbox"
                 />
+                <span className="splitCheckMark" aria-hidden="true" />
                 <AvatarView className="splitAvatar" name={member.name} color={member.avatar_color} image={member.avatar_url} />
                 <span className="splitMemberText">
                   <strong>{member.name}</strong>
-                  <small>{selected.includes(member.id) ? "Included in split" : "Not included"}</small>
+                  <small>{selected.includes(member.id) ? "Selected" : "Tap to include"}</small>
                 </span>
                 {splitType !== "equal" ? (
                   <input

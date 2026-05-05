@@ -795,21 +795,43 @@ textarea:focus {
 }
 
 .splitPanel {
-  border: 1px solid #dbe7fb;
-  border-radius: 18px;
-  background: linear-gradient(180deg, #ffffff, #f8fbff);
-  box-shadow: 0 12px 28px rgba(16, 24, 40, 0.06);
-  padding: 18px;
+  border: 0.5px solid rgba(15, 23, 42, 0.08);
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: none;
+  padding: 14px;
 }
 
 .splitPanel h3 {
   margin-bottom: 2px;
 }
 
+.splitPanelHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.splitPanelHeader .muted {
+  margin-bottom: 0;
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.splitPanelHeader > span {
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: var(--blue-soft);
+  color: var(--blue);
+  padding: 5px 9px;
+  font-size: 12px;
+  font-weight: 900;
+}
+
 .splitMemberGrid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
+  gap: 8px;
 }
 
 .splitMemberOption {
@@ -817,32 +839,58 @@ textarea:focus {
   grid-template-columns: auto auto minmax(0, 1fr);
   gap: 10px;
   align-items: center;
-  min-height: 76px;
-  border: 1px solid #e4e7ec;
-  border-radius: 16px;
+  min-height: 56px;
+  border: 0.5px solid rgba(15, 23, 42, 0.08);
+  border-radius: 14px;
   background: #ffffff;
-  box-shadow: 0 8px 18px rgba(16, 24, 40, 0.045);
-  padding: 12px;
+  box-shadow: none;
+  padding: 9px 10px;
 }
 
 .splitMemberOption.selected {
-  border-color: #93c5fd;
-  background: #eff6ff;
+  border-color: rgba(108, 99, 255, 0.36);
+  background: #faf9ff;
 }
 
 .splitCheckbox {
-  accent-color: var(--blue);
-  transform: scale(1.18);
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.splitCheckMark {
+  position: relative;
+  display: grid;
+  width: 22px;
+  height: 22px;
+  place-items: center;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 999px;
+  background: #ffffff;
+}
+
+.splitMemberOption.selected .splitCheckMark {
+  border-color: var(--blue);
+  background: var(--blue);
+}
+
+.splitMemberOption.selected .splitCheckMark::after {
+  width: 8px;
+  height: 4px;
+  border-bottom: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  content: "";
+  transform: rotate(-45deg) translateY(-1px);
 }
 
 .splitAvatar {
   display: grid;
-  width: 38px;
-  height: 38px;
+  width: 34px;
+  height: 34px;
   place-items: center;
-  border-radius: 13px;
+  border-radius: 12px;
   color: #ffffff;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 900;
   background-position: center;
   background-size: cover;
@@ -863,7 +911,7 @@ textarea:focus {
 
 .splitMemberText small {
   color: var(--muted);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 800;
 }
 
