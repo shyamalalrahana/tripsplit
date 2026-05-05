@@ -60,12 +60,12 @@ export function InstallAppButton() {
   if (installed) return null;
 
   return (
-    <span className="installNavSlot">
-      <button className="installNavButton" type="button" onClick={installApp} aria-label="Install TripSplits app">
+    <span className="installInline">
+      <button className="button" type="button" onClick={installApp} aria-label="Install TripSplits app">
         <Download size={17} />
-        <span>Install</span>
+        <span>Install app</span>
       </button>
-      {message ? <span className="installHint">{message}</span> : null}
+      {message ? <span className="installInlineHint">{message}</span> : null}
     </span>
   );
 }

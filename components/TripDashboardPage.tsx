@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Copy, Plus, Share2, TrendingDown, TrendingUp, Users, WalletCards } from "lucide-react";
 import { useEffect, useState } from "react";
 import { AppShell } from "@/components/AppShell";
+import { InstallAppButton } from "@/components/InstallAppButton";
 import { LoadingCard } from "@/components/LoadingCard";
 import { calculateBalances, calculateSettlementDrafts, formatMoney } from "@/lib/calculations";
 import { supabase } from "@/lib/supabase";
@@ -223,6 +224,15 @@ export function TripDashboardPage({ tripId }: { tripId: string }) {
           </div>
           <button className="buttonSecondary" onClick={copyInvite} type="button"><Copy size={16} /> Copy invite link</button>
         </aside>
+      </section>
+
+      <section className="card installTripCard">
+        <div>
+          <p className="kicker">Install TripSplits</p>
+          <h2>Open this trip like an app</h2>
+          <p className="muted">Add TripSplits to your phone home screen for a cleaner full-screen experience.</p>
+        </div>
+        <InstallAppButton />
       </section>
     </AppShell>
   );
