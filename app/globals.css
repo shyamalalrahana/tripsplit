@@ -523,11 +523,11 @@ textarea:focus {
 
 .bottomNav {
   position: fixed;
-  right: 12px;
-  bottom: max(12px, env(safe-area-inset-bottom));
-  left: 12px;
+  right: max(8px, env(safe-area-inset-right));
+  bottom: max(8px, env(safe-area-inset-bottom));
+  left: max(8px, env(safe-area-inset-left));
   z-index: 30;
-  display: none;
+  display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 4px;
   border: 1px solid rgba(208, 213, 221, 0.85);
@@ -1660,21 +1660,25 @@ textarea:focus {
 }
 
 .bottomNav {
-  right: 0;
+  right: env(safe-area-inset-right);
   bottom: 0;
-  left: 0;
+  left: env(safe-area-inset-left);
+  display: grid;
   grid-template-columns: repeat(5, 1fr);
   border: 0;
   border-top: 0.5px solid rgba(0, 0, 0, 0.08);
   border-radius: 0;
   background: #ffffff;
   box-shadow: none;
-  padding: 10px 4px max(18px, calc(14px + env(safe-area-inset-bottom)));
+  padding: 9px 6px max(18px, calc(14px + env(safe-area-inset-bottom)));
 }
 
 .bottomNav a {
   gap: 4px;
   color: #aaa;
+  min-height: 56px;
+  padding: 5px 2px 7px;
+  touch-action: manipulation;
 }
 
 .bottomNav a::before {
@@ -1752,7 +1756,7 @@ textarea:focus {
 
   .page {
     width: 100%;
-    padding: 14px 0 max(104px, calc(92px + env(safe-area-inset-bottom)));
+    padding: 14px 0 max(116px, calc(104px + env(safe-area-inset-bottom)));
   }
 
   .page > *:not(.cardSoft) {
