@@ -6,7 +6,21 @@ const plusJakarta = Plus_Jakarta_Sans({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "TripSplits",
-  description: "Split trip expenses, invite friends, and settle with UPI QR payments."
+  description: "Split trip expenses, invite friends, and settle with UPI QR payments.",
+  applicationName: "TripSplits",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "TripSplits"
+  },
+  formatDetection: {
+    telephone: false
+  },
+  icons: {
+    icon: "/app-icon.svg",
+    apple: "/app-icon.svg"
+  }
 };
 
 export const viewport: Viewport = {
