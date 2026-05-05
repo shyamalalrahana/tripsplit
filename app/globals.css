@@ -65,6 +65,20 @@ a {
   display: flex;
   align-items: center;
   gap: 10px;
+  min-width: 0;
+}
+
+.brandLogo {
+  display: block;
+  width: 176px;
+  max-width: 42vw;
+  height: auto;
+  flex: 0 1 auto;
+  object-fit: contain;
+}
+
+.brandFallback {
+  display: none;
 }
 
 .brandMark,
@@ -1752,6 +1766,11 @@ textarea:focus {
   .topbar {
     border-radius: 0 0 24px 24px;
     padding: 14px 16px 18px;
+  }
+
+  .brandLogo {
+    width: 142px;
+    max-width: calc(100vw - 96px);
   }
 
   .page {

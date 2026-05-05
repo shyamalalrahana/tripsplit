@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { LogOut, Plus, ReceiptText, Scale, UserRound, Users, WalletCards } from "lucide-react";
@@ -54,8 +55,8 @@ export function AppShell({
     <div className="shell">
       <header className="topbar">
         <Link className="brand" href="/">
-          <span className="brandMark">TS</span>
-          <span>
+          <Image className="brandLogo" src="/tripsplits-logo.svg" alt="TripSplits.in" width={186} height={45} priority />
+          <span className="brandFallback">
             <span className="brandTitle">TripSplits</span>
             <span className="brandSub">Trip Money Manager</span>
           </span>
