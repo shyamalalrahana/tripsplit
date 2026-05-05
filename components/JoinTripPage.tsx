@@ -50,7 +50,7 @@ export function JoinTripPage({ inviteCode }: { inviteCode: string }) {
       setJoining(false);
       return;
     }
-    const guestStorageKey = `tripsplit-member-${trip.id}`;
+    const guestStorageKey = `tripsplits-member-${trip.id}`;
     const savedGuestMemberId = typeof window !== "undefined" ? window.localStorage.getItem(guestStorageKey) : "";
     if (profile) {
       const { data: existing } = await supabase

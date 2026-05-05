@@ -74,7 +74,7 @@ export function calculateSettlementDrafts(
         from_member_id: debtors[i].id,
         to_member_id: creditors[j].id,
         amount,
-        payment_note: `TripSplit payment - ${tripName}`
+        payment_note: `TripSplits payment - ${tripName}`
       });
     }
     debtors[i].amount = roundMoney(debtors[i].amount - amount);

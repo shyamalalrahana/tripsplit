@@ -1,4 +1,4 @@
-const STORAGE_KEY = "tripsplit-state-v1";
+const STORAGE_KEY = "tripsplits-state-v1";
 
 const categories = [
   { value: "Food", icon: "FD" },
@@ -83,7 +83,7 @@ function loadState() {
       const parsed = JSON.parse(saved);
       if (parsed && Array.isArray(parsed.trips)) return parsed;
     } catch (error) {
-      console.warn("Could not parse saved TripSplit state", error);
+      console.warn("Could not parse saved TripSplits state", error);
     }
   }
   return { trips: [demoTrip], activeTripId: demoTrip.id };
@@ -261,10 +261,10 @@ function appShell(trip) {
   return `
     <div class="app-shell">
       <header class="topbar">
-        <button class="brand" data-route="dashboard" aria-label="TripSplit dashboard">
+        <button class="brand" data-route="dashboard" aria-label="TripSplits dashboard">
           <span class="brand-mark">TS</span>
           <span class="brand-copy">
-            <span class="brand-title">TripSplit</span>
+            <span class="brand-title">TripSplits</span>
             <span class="brand-subtitle"><span class="trip-dot"></span>${escapeHtml(trip.name)} · ${escapeHtml(trip.destination)}</span>
           </span>
         </button>
@@ -280,9 +280,9 @@ function landingPage() {
   return `
     <div class="app-shell">
       <header class="topbar">
-        <button class="brand" data-route="landing" aria-label="TripSplit home">
+        <button class="brand" data-route="landing" aria-label="TripSplits home">
           <span class="brand-mark">TS</span>
-          <span class="brand-copy"><span class="brand-title">TripSplit</span><span class="brand-subtitle"><span class="trip-dot"></span>Trip Money Manager</span></span>
+          <span class="brand-copy"><span class="brand-title">TripSplits</span><span class="brand-subtitle"><span class="trip-dot"></span>Trip Money Manager</span></span>
         </button>
         <div class="inline-actions">
           <button class="secondary-button" data-action="demo">View Demo Trip</button>
@@ -555,7 +555,7 @@ function expenseFormFields(trip) {
 
 function splitValueInputs(trip, expense) {
   if (expense.splitType === "equal") {
-    return `<p class="muted">TripSplit will divide this expense equally among selected members.</p>`;
+    return `<p class="muted">TripSplits will divide this expense equally among selected members.</p>`;
   }
   const suffix = expense.splitType === "percentage" ? "%" : activeTrip().currency;
   return `
@@ -669,7 +669,7 @@ function avatar(member) {
 }
 
 function empty(copy, actionLabel, targetRoute, action) {
-  return `<div class="empty-state"><div><h3>${copy}</h3><p class="muted">TripSplit keeps the math tidy so the trip stays fun.</p><button class="primary-button" data-route="${targetRoute}" data-action="${action}">${actionLabel}</button></div></div>`;
+  return `<div class="empty-state"><div><h3>${copy}</h3><p class="muted">TripSplits keeps the math tidy so the trip stays fun.</p><button class="primary-button" data-route="${targetRoute}" data-action="${action}">${actionLabel}</button></div></div>`;
 }
 
 function splitTypeLabel(type) {
@@ -971,7 +971,7 @@ function decodeSharePayload(payload) {
     const padded = normalized + "=".repeat((4 - (normalized.length % 4)) % 4);
     return JSON.parse(decodeURIComponent(escape(atob(padded))));
   } catch (error) {
-    console.warn("Could not load shared TripSplit link", error);
+    console.warn("Could not load shared TripSplits link", error);
     return null;
   }
 }

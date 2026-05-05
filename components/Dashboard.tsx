@@ -37,7 +37,7 @@ export function Dashboard() {
       const fallback = {
         user_id: auth.user.id,
         email: auth.user.email,
-        name: auth.user.user_metadata?.name || auth.user.email?.split("@")[0] || "TripSplit user",
+        name: auth.user.user_metadata?.name || auth.user.email?.split("@")[0] || "TripSplits user",
         avatar_color: "#2563eb"
       };
       const inserted = await supabase.from("profiles").upsert(fallback, { onConflict: "user_id" }).select("*").single();

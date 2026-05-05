@@ -48,7 +48,7 @@ export function PaymentPage({ tripId, settlementId }: { tripId: string; settleme
 
   if (!trip || !settlement || !from || !to) return <AppShell tripId={tripId}><LoadingCard label="Loading payment" /></AppShell>;
 
-  const note = settlement.payment_note || `TripSplit - ${trip.name}`;
+  const note = settlement.payment_note || `TripSplits - ${trip.name}`;
   const upiLink = to.upi_id
     ? buildUpiLink({ upiId: to.upi_id, receiverName: to.name, amount: Number(settlement.amount), currency: trip.currency, note })
     : "";
@@ -60,7 +60,7 @@ export function PaymentPage({ tripId, settlementId }: { tripId: string; settleme
           <p className="kicker">UPI QR payment</p>
           <h1>{from.name} pays {to.name}</h1>
           <h2>{formatMoney(Number(settlement.amount), trip.currency)}</h2>
-          <p className="muted">Scan QR to pay with any UPI app. TripSplit cannot automatically verify payment yet, so confirmation is manual.</p>
+          <p className="muted">Scan QR to pay with any UPI app. TripSplits cannot automatically verify payment yet, so confirmation is manual.</p>
           <div className="grid">
             <div className="row"><span>Receiver</span><b>{to.name}</b></div>
             <div className="row"><span>UPI ID</span><b>{to.upi_id || "Not added"}</b></div>

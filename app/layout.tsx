@@ -5,7 +5,7 @@ import "./globals.css";
 const plusJakarta = Plus_Jakarta_Sans({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "TripSplit",
+  title: "TripSplits",
   description: "Split trip expenses, invite friends, and settle with UPI QR payments."
 };
 

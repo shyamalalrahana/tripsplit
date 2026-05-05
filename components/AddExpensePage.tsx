@@ -38,7 +38,7 @@ export function AddExpensePage({ tripId }: { tripId: string }) {
   }
 
   const splitHint = useMemo(() => {
-    if (splitType === "equal") return "TripSplit will divide this expense equally among selected members.";
+    if (splitType === "equal") return "TripSplits will divide this expense equally among selected members.";
     if (splitType === "custom") return "Enter the exact amount each selected member should pay.";
     return "Enter percentages for selected members. Total should be 100%.";
   }, [splitType]);
@@ -122,7 +122,7 @@ export function AddExpensePage({ tripId }: { tripId: string }) {
   return (
     <AppShell tripId={tripId}>
       <form className="card grid" onSubmit={submit}>
-        <div><p className="kicker">Manual expense</p><h1>Add expense</h1><p className="muted">Rahul paid for Petrol. Select who shared it and TripSplit will calculate balances.</p></div>
+        <div><p className="kicker">Manual expense</p><h1>Add expense</h1><p className="muted">Rahul paid for Petrol. Select who shared it and TripSplits will calculate balances.</p></div>
         <div className="grid2">
           <div className="field"><label>Expense title</label><input name="title" placeholder="Petrol" required /></div>
           <div className="field"><label>Amount</label><input name="amount" type="number" min="0.01" step="0.01" required /></div>

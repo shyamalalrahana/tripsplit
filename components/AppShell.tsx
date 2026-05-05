@@ -56,7 +56,7 @@ export function AppShell({
         <Link className="brand" href="/">
           <span className="brandMark">TS</span>
           <span>
-            <span className="brandTitle">TripSplit</span>
+            <span className="brandTitle">TripSplits</span>
             <span className="brandSub">Trip Money Manager</span>
           </span>
         </Link>

@@ -1,6 +1,6 @@
-# TripSplit
+# TripSplits
 
-TripSplit is a mobile-first trip money manager built with Next.js, Supabase, and Vercel. Users can log in, create trip groups, invite friends, add shared expenses, calculate balances, and settle with UPI QR payment links.
+TripSplits is a mobile-first trip money manager built with Next.js, Supabase, and Vercel. Users can log in, create trip groups, invite friends, add shared expenses, calculate balances, and settle with UPI QR payment links.
 
 ## Stack
 
@@ -20,7 +20,7 @@ TripSplit is a mobile-first trip money manager built with Next.js, Supabase, and
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-NEXT_PUBLIC_APP_URL=https://tripsplit-tan.vercel.app
+NEXT_PUBLIC_APP_URL=https://tripsplits.in
 ```
 
 5. Install dependencies:
@@ -41,4 +41,4 @@ Add the same environment variables in Vercel Project Settings, then deploy from 
 
 ## MVP Payment Note
 
-UPI QR codes help users pay with Google Pay, PhonePe, Paytm, BHIM, or any UPI app. TripSplit does not automatically verify bank/payment completion yet. Sender and receiver confirmation are manual for this MVP.
+UPI QR codes help users pay with Google Pay, PhonePe, Paytm, BHIM, or any UPI app. TripSplits does not automatically verify bank/payment completion yet. Sender and receiver confirmation are manual for this MVP.
