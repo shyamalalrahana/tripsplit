@@ -8,6 +8,8 @@ import { calculateBalances, calculateSettlementDrafts, formatMoney, mergeSettlem
 import { supabase } from "@/lib/supabase";
 import type { Expense, ExpenseSplit, Settlement, Trip, TripMember } from "@/lib/types";
 
+const expenseListColumns = "id,trip_id,title,amount,category,paid_by_member_id,expense_date,notes,created_by";
+
 export function SettlementsPage({ tripId }: { tripId: string }) {
   const [trip, setTrip] = useState<Trip | null>(null);
   const [members, setMembers] = useState<TripMember[]>([]);
@@ -20,23 +22,25 @@ export function SettlementsPage({ tripId }: { tripId: string }) {
   }, [tripId]);
 
   async function load() {
-    const { data: tripData } = await supabase.from("trips").select("*").eq("id", tripId).single();
-    const { data: membersData } = await supabase.from("trip_members").select("*").eq("trip_id", tripId);
-    const { data: expensesData } = await supabase.from("expenses").select("*").eq("trip_id", tripId);
+    const [tripResult, membersResult, expensesResult, settlementsResult] = await Promise.all([
+      supabase.from("trips").select("*").eq("id", tripId).single(),
+      supabase.from("trip_members").select("id,trip_id,profile_id,name,phone,upi_id,avatar_color,avatar_url,role").eq("trip_id", tripId),
+      supabase.from("expenses").select(expenseListColumns).eq("trip_id", tripId),
+      supabase.from("settlements").select("*").eq("trip_id", tripId)
+    ]);
+    const expensesData = expensesResult.data || [];
     const expenseIds = (expensesData || []).map((expense) => expense.id);
     const { data: splitsData } = expenseIds.length ? await supabase.from("expense_splits").select("*").in("expense_id", expenseIds) : { data: [] };
-    const { data: settlementsData } = await supabase.from("settlements").select("*").eq("trip_id", tripId);
-    setTrip(tripData);
-    setMembers(membersData || []);
-    setExpenses(expensesData || []);
+    setTrip(tripResult.data);
+    setMembers(membersResult.data || []);
+    setExpenses(expensesData as Expense[]);
     setSplits(splitsData || []);
-    setSettlements(settlementsData || []);
+    setSettlements(settlementsResult.data || []);
   }
 
   async function ensureSaved(draft: { from_member_id: string; to_member_id: string; amount: number; payment_note: string; id?: string }) {
     if (draft.id) return draft.id;
     const { data } = await supabase.from("settlements").insert({ ...draft, trip_id: tripId, status: "pending" }).select("*").single();
-    await load();
     return data?.id;
   }
 

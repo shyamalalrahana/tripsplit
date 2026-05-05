@@ -26,7 +26,11 @@ export function AppShell({
   async function loadProfile() {
     const { data: auth } = await supabase.auth.getUser();
     if (!auth.user) return;
-    const { data } = await supabase.from("profiles").select("*").eq("user_id", auth.user.id).maybeSingle();
+    const { data } = await supabase
+      .from("profiles")
+      .select("id,user_id,name,email,phone,upi_id,avatar_color,avatar_url")
+      .eq("user_id", auth.user.id)
+      .maybeSingle();
     setProfile(data);
   }
 

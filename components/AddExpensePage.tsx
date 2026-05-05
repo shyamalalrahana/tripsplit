@@ -28,11 +28,13 @@ export function AddExpensePage({ tripId }: { tripId: string }) {
   }, [tripId]);
 
   async function load() {
-    const { data: tripData } = await supabase.from("trips").select("*").eq("id", tripId).single();
-    const { data: membersData } = await supabase.from("trip_members").select("*").eq("trip_id", tripId).order("joined_at");
-    setTrip(tripData);
-    setMembers(membersData || []);
-    setSelected((membersData || []).map((member) => member.id));
+    const [tripResult, membersResult] = await Promise.all([
+      supabase.from("trips").select("*").eq("id", tripId).single(),
+      supabase.from("trip_members").select("*").eq("trip_id", tripId).order("joined_at")
+    ]);
+    setTrip(tripResult.data);
+    setMembers(membersResult.data || []);
+    setSelected((membersResult.data || []).map((member) => member.id));
   }
 
   const splitHint = useMemo(() => {

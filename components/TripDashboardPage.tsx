@@ -28,6 +28,8 @@ const categoryImages: Record<string, { icon: string; tone: string }> = {
   Other: { icon: "🧾", tone: "slate" }
 };
 
+const expenseListColumns = "id,trip_id,title,amount,category,paid_by_member_id,expense_date,notes,created_by";
+
 function formatExpenseDate(date: string) {
   return new Intl.DateTimeFormat("en", { month: "short", day: "numeric" }).format(new Date(date));
 }
@@ -41,24 +43,33 @@ export function TripDashboardPage({ tripId }: { tripId: string }) {
   }, [tripId]);
 
   async function load() {
-    const { data: trip } = await supabase.from("trips").select("*").eq("id", tripId).single();
-    const { data: members } = await supabase.from("trip_members").select("*").eq("trip_id", tripId).order("joined_at");
-    const { data: expenses } = await supabase.from("expenses").select("*").eq("trip_id", tripId).order("expense_date", { ascending: false });
+    const [tripResult, membersResult, expensesResult, settlementsResult, authResult] = await Promise.all([
+      supabase.from("trips").select("*").eq("id", tripId).single(),
+      supabase.from("trip_members").select("id,trip_id,profile_id,name,phone,upi_id,avatar_color,avatar_url,role").eq("trip_id", tripId).order("joined_at"),
+      supabase.from("expenses").select(expenseListColumns).eq("trip_id", tripId).order("expense_date", { ascending: false }),
+      supabase.from("settlements").select("*").eq("trip_id", tripId),
+      supabase.auth.getUser()
+    ]);
+    const { data: trip } = tripResult;
+    const members = membersResult.data || [];
+    const expenses = (expensesResult.data || []) as Expense[];
     const expenseIds = (expenses || []).map((expense) => expense.id);
-    const { data: splits } = expenseIds.length
-      ? await supabase.from("expense_splits").select("*").in("expense_id", expenseIds)
-      : { data: [] as ExpenseSplit[] };
-    const { data: settlements } = await supabase.from("settlements").select("*").eq("trip_id", tripId);
-    const { data: auth } = await supabase.auth.getUser();
-    const { data: profile } = auth.user ? await supabase.from("profiles").select("id").eq("user_id", auth.user.id).maybeSingle() : { data: null };
+    const [splitsResult, profileResult] = await Promise.all([
+      expenseIds.length
+        ? supabase.from("expense_splits").select("*").in("expense_id", expenseIds)
+        : Promise.resolve({ data: [] as ExpenseSplit[] }),
+      authResult.data.user ? supabase.from("profiles").select("id").eq("user_id", authResult.data.user.id).maybeSingle() : Promise.resolve({ data: null })
+    ]);
+    const { data: splits } = splitsResult;
+    const { data: profile } = profileResult;
     const currentMember = profile ? (members || []).find((member) => member.profile_id === profile.id) : null;
     if (trip) {
       setBundle({
         trip,
-        members: members || [],
-        expenses: expenses || [],
+        members,
+        expenses,
         splits: splits || [],
-        settlements: settlements || [],
+        settlements: settlementsResult.data || [],
         currentMemberId: currentMember?.id || null
       });
     }

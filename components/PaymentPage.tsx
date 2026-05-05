@@ -20,14 +20,19 @@ export function PaymentPage({ tripId, settlementId }: { tripId: string; settleme
   }, [tripId, settlementId]);
 
   async function load() {
-    const { data: tripData } = await supabase.from("trips").select("*").eq("id", tripId).single();
-    const { data: settlementData } = await supabase.from("settlements").select("*").eq("id", settlementId).single();
-    setTrip(tripData);
-    setSettlement(settlementData);
-    if (settlementData) {
-      const { data: members } = await supabase.from("trip_members").select("*").in("id", [settlementData.from_member_id, settlementData.to_member_id]);
-      setFrom((members || []).find((member) => member.id === settlementData.from_member_id) || null);
-      setTo((members || []).find((member) => member.id === settlementData.to_member_id) || null);
+    const [tripResult, settlementResult] = await Promise.all([
+      supabase.from("trips").select("*").eq("id", tripId).single(),
+      supabase.from("settlements").select("*").eq("id", settlementId).single()
+    ]);
+    setTrip(tripResult.data);
+    setSettlement(settlementResult.data);
+    if (settlementResult.data) {
+      const { data: members } = await supabase
+        .from("trip_members")
+        .select("id,trip_id,profile_id,name,phone,upi_id,avatar_color,avatar_url,role")
+        .in("id", [settlementResult.data.from_member_id, settlementResult.data.to_member_id]);
+      setFrom((members || []).find((member) => member.id === settlementResult.data.from_member_id) || null);
+      setTo((members || []).find((member) => member.id === settlementResult.data.to_member_id) || null);
     }
   }
 

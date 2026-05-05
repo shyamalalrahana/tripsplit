@@ -18,14 +18,16 @@ export function ExpenseDetailsPage({ tripId, expenseId }: { tripId: string; expe
   }, [tripId, expenseId]);
 
   async function load() {
-    const { data: tripData } = await supabase.from("trips").select("*").eq("id", tripId).single();
-    const { data: expenseData } = await supabase.from("expenses").select("*").eq("id", expenseId).single();
-    const { data: membersData } = await supabase.from("trip_members").select("*").eq("trip_id", tripId);
-    const { data: splitData } = await supabase.from("expense_splits").select("*").eq("expense_id", expenseId);
-    setTrip(tripData);
-    setExpense(expenseData);
-    setMembers(membersData || []);
-    setSplits(splitData || []);
+    const [tripResult, expenseResult, membersResult, splitResult] = await Promise.all([
+      supabase.from("trips").select("*").eq("id", tripId).single(),
+      supabase.from("expenses").select("*").eq("id", expenseId).single(),
+      supabase.from("trip_members").select("id,trip_id,profile_id,name,phone,upi_id,avatar_color,avatar_url,role").eq("trip_id", tripId),
+      supabase.from("expense_splits").select("*").eq("expense_id", expenseId)
+    ]);
+    setTrip(tripResult.data);
+    setExpense(expenseResult.data);
+    setMembers(membersResult.data || []);
+    setSplits(splitResult.data || []);
   }
 
   async function remove() {

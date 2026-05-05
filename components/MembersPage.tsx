@@ -10,6 +10,8 @@ import { calculateBalances, formatMoney } from "@/lib/calculations";
 import { supabase } from "@/lib/supabase";
 import type { Expense, ExpenseSplit, Trip, TripMember } from "@/lib/types";
 
+const expenseListColumns = "id,trip_id,title,amount,category,paid_by_member_id,expense_date,notes,created_by";
+
 export function MembersPage({ tripId }: { tripId: string }) {
   const [trip, setTrip] = useState<Trip | null>(null);
   const [members, setMembers] = useState<TripMember[]>([]);
@@ -24,14 +26,17 @@ export function MembersPage({ tripId }: { tripId: string }) {
   }, [tripId]);
 
   async function load() {
-    const { data: tripData } = await supabase.from("trips").select("*").eq("id", tripId).single();
-    const { data: membersData } = await supabase.from("trip_members").select("*").eq("trip_id", tripId).order("joined_at");
-    const { data: expensesData } = await supabase.from("expenses").select("*").eq("trip_id", tripId);
+    const [tripResult, membersResult, expensesResult] = await Promise.all([
+      supabase.from("trips").select("*").eq("id", tripId).single(),
+      supabase.from("trip_members").select("*").eq("trip_id", tripId).order("joined_at"),
+      supabase.from("expenses").select(expenseListColumns).eq("trip_id", tripId)
+    ]);
+    const expensesData = expensesResult.data || [];
     const expenseIds = (expensesData || []).map((expense) => expense.id);
     const { data: splitsData } = expenseIds.length ? await supabase.from("expense_splits").select("*").in("expense_id", expenseIds) : { data: [] };
-    setTrip(tripData);
-    setMembers(membersData || []);
-    setExpenses(expensesData || []);
+    setTrip(tripResult.data);
+    setMembers(membersResult.data || []);
+    setExpenses(expensesData as Expense[]);
     setSplits(splitsData || []);
   }
 

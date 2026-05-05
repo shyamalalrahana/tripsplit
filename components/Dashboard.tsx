@@ -28,7 +28,11 @@ export function Dashboard() {
       return;
     }
 
-    let { data: profileData } = await supabase.from("profiles").select("*").eq("user_id", auth.user.id).single();
+    let { data: profileData } = await supabase
+      .from("profiles")
+      .select("id,user_id,name,email,phone,upi_id,avatar_color,avatar_url")
+      .eq("user_id", auth.user.id)
+      .maybeSingle();
     if (!profileData) {
       const fallback = {
         user_id: auth.user.id,
@@ -39,6 +43,10 @@ export function Dashboard() {
       const inserted = await supabase.from("profiles").upsert(fallback, { onConflict: "user_id" }).select("*").single();
       profileData = inserted.data;
     }
+    if (!profileData) {
+      setLoading(false);
+      return;
+    }
     setProfile(profileData);
 
     const { data: memberships } = await supabase
@@ -47,7 +55,11 @@ export function Dashboard() {
       .eq("profile_id", profileData.id);
     const tripIds = (memberships || []).map((item) => item.trip_id);
     if (tripIds.length) {
-      const { data } = await supabase.from("trips").select("*").in("id", tripIds).order("created_at", { ascending: false });
+      const { data } = await supabase
+        .from("trips")
+        .select("id,name,destination,currency,start_date,end_date,trip_image_url,created_by,invite_code")
+        .in("id", tripIds)
+        .order("created_at", { ascending: false });
       setTrips(data || []);
     } else {
       setTrips([]);
