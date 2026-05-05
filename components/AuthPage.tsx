@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { imageFileToDataUrl } from "@/lib/avatar";
@@ -56,6 +57,7 @@ export function AuthPage() {
     <main className="page">
       <section className="heroGrid">
         <div className="cardSoft">
+          <Image className="authLogo" src="/tripsplits-logo.png" alt="TripSplits.in" width={620} height={150} priority />
           <p className="kicker">Trip money, finally clear</p>
           <h1>Split trips with friends and settle by UPI QR</h1>
           <p className="muted">

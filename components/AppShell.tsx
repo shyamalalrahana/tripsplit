@@ -55,7 +55,7 @@ export function AppShell({
     <div className="shell">
       <header className="topbar">
         <Link className="brand" href="/">
-          <Image className="brandLogo" src="/tripsplits-logo.svg" alt="TripSplits.in" width={186} height={45} priority />
+          <Image className="brandLogo" src="/tripsplits-logo.png" alt="TripSplits.in" width={620} height={150} priority />
           <span className="brandFallback">
             <span className="brandTitle">TripSplits</span>
             <span className="brandSub">Trip Money Manager</span>

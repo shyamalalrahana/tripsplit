@@ -70,7 +70,7 @@ a {
 
 .brandLogo {
   display: block;
-  width: 176px;
+  width: 168px;
   max-width: 42vw;
   height: auto;
   flex: 0 1 auto;
@@ -79,6 +79,14 @@ a {
 
 .brandFallback {
   display: none;
+}
+
+.authLogo {
+  display: block;
+  width: min(230px, 70vw);
+  height: auto;
+  margin-bottom: 18px;
+  filter: drop-shadow(0 10px 18px rgba(15, 107, 255, 0.22));
 }
 
 .brandMark,
@@ -1769,7 +1777,7 @@ textarea:focus {
   }
 
   .brandLogo {
-    width: 142px;
+    width: 150px;
     max-width: calc(100vw - 96px);
   }
 
@@ -1786,6 +1794,11 @@ textarea:focus {
   .cardSoft {
     margin: -14px 0 14px;
     padding: 16px 18px 20px;
+  }
+
+  .authLogo {
+    width: min(190px, 72vw);
+    margin-bottom: 14px;
   }
 
   .cardSoft h1 {
