@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { LogOut, Plus, ReceiptText, Scale, UserRound, Users, WalletCards } from "lucide-react";
 import { AvatarView } from "@/components/AvatarView";
@@ -16,6 +16,7 @@ export function AppShell({
   tripId?: string;
 }) {
   const router = useRouter();
+  const pathname = usePathname();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -86,8 +87,9 @@ export function AppShell({
         <nav className="bottomNav" aria-label="Trip navigation">
           {nav.map((item) => {
             const Icon = item.icon;
+            const isActive = item.href === `/trips/${tripId}` ? pathname === item.href : pathname.startsWith(item.href);
             return (
-              <Link href={item.href} key={item.href}>
+              <Link aria-current={isActive ? "page" : undefined} className={isActive ? "active" : ""} href={item.href} key={item.href}>
                 <Icon size={17} />
                 <span>{item.label}</span>
               </Link>

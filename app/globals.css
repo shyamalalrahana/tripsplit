@@ -539,6 +539,7 @@ textarea:focus {
 }
 
 .bottomNav a {
+  position: relative;
   display: grid;
   place-items: center;
   border-radius: 13px;
@@ -546,11 +547,13 @@ textarea:focus {
   color: #344054;
   font-size: 11px;
   font-weight: 900;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
 
-.bottomNav a:first-child {
+.bottomNav a.active {
   background: var(--blue);
   color: white;
+  transform: translateY(-1px);
 }
 
 .profileMenu {
@@ -1617,17 +1620,24 @@ textarea:focus {
   color: #aaa;
 }
 
-.bottomNav a:first-child {
-  background: transparent;
-  color: #6c63ff;
-}
-
-.bottomNav a:first-child::before {
-  width: 26px;
+.bottomNav a::before {
+  width: 0;
   height: 4px;
   border-radius: 2px;
   background: #6c63ff;
   content: "";
+  opacity: 0;
+  transition: width 0.22s ease, opacity 0.22s ease;
+}
+
+.bottomNav a.active {
+  background: transparent;
+  color: #6c63ff;
+}
+
+.bottomNav a.active::before {
+  width: 26px;
+  opacity: 1;
 }
 
 .expenseCategoryDot,
