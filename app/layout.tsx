@@ -3,8 +3,10 @@ import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
 const plusJakarta = Plus_Jakarta_Sans({ subsets: ["latin"] });
+const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://tripsplits.in";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(appUrl),
   title: "TripSplits",
   description: "Split trip expenses, invite friends, and settle with UPI QR payments.",
   applicationName: "TripSplits",
@@ -20,6 +22,27 @@ export const metadata: Metadata = {
   icons: {
     icon: "/app-icon.svg",
     apple: "/app-icon.svg"
+  },
+  openGraph: {
+    type: "website",
+    siteName: "TripSplits",
+    title: "TripSplits - Split trip expenses without confusion",
+    description: "Create a trip, invite friends, track who paid, and settle with one clear summary.",
+    url: appUrl,
+    images: [
+      {
+        url: `${appUrl}/opengraph-image`,
+        width: 1200,
+        height: 630,
+        alt: "TripSplits trip money manager"
+      }
+    ]
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "TripSplits - Split trip expenses without confusion",
+    description: "Create a trip, invite friends, track who paid, and settle with one clear summary.",
+    images: [`${appUrl}/opengraph-image`]
   }
 };
 
