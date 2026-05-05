@@ -85,8 +85,15 @@ a {
   display: block;
   width: min(230px, 70vw);
   height: auto;
-  margin-bottom: 18px;
   filter: drop-shadow(0 10px 18px rgba(15, 107, 255, 0.22));
+}
+
+.authHeroTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 18px;
 }
 
 .topActions {
@@ -110,12 +117,6 @@ a {
 
 .themeToggle:active {
   transform: scale(0.96);
-}
-
-.authThemeAction {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 12px;
 }
 
 .brandMark,
@@ -1867,7 +1868,17 @@ textarea:focus {
 
   .authLogo {
     width: min(190px, 72vw);
+  }
+
+  .authHeroTop {
+    gap: 10px;
     margin-bottom: 14px;
+  }
+
+  .authHeroTop .themeToggle {
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
   }
 
   .cardSoft h1 {

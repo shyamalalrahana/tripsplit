@@ -56,12 +56,12 @@ export function AuthPage() {
 
   return (
     <main className="page">
-      <div className="authThemeAction">
-        <ThemeToggle />
-      </div>
       <section className="heroGrid">
         <div className="cardSoft">
-          <Image className="authLogo" src="/tripsplits-logo.png" alt="TripSplits.in" width={620} height={150} priority />
+          <div className="authHeroTop">
+            <Image className="authLogo" src="/tripsplits-logo.png" alt="TripSplits.in" width={620} height={150} priority />
+            <ThemeToggle />
+          </div>
           <p className="kicker">Trip money, finally clear</p>
           <h1>Split trips with friends and settle by UPI QR</h1>
           <p className="muted">
