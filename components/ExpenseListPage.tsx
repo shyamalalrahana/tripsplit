@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Plus } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { LoadingCard } from "@/components/LoadingCard";
@@ -26,6 +27,8 @@ function formatExpenseDate(date: string) {
 }
 
 export function ExpenseListPage({ tripId }: { tripId: string }) {
+  const searchParams = useSearchParams();
+  const selectedCategory = searchParams.get("category") || "All";
   const [trip, setTrip] = useState<Trip | null>(null);
   const [members, setMembers] = useState<TripMember[]>([]);
   const [expenses, setExpenses] = useState<Expense[]>([]);
@@ -46,6 +49,10 @@ export function ExpenseListPage({ tripId }: { tripId: string }) {
   }
 
   if (!trip) return <AppShell tripId={tripId}><LoadingCard label="Loading expenses" /></AppShell>;
+  const availableCategories = Array.from(new Set(expenses.map((expense) => expense.category))).filter(Boolean);
+  const categories = ["All", ...availableCategories];
+  const filteredExpenses = selectedCategory === "All" ? expenses : expenses.filter((expense) => expense.category === selectedCategory);
+  const filteredTotal = filteredExpenses.reduce((sum, expense) => sum + Number(expense.amount || 0), 0);
 
   return (
     <AppShell tripId={tripId}>
@@ -53,8 +60,27 @@ export function ExpenseListPage({ tripId }: { tripId: string }) {
         <div><p className="kicker">Expenses</p><h1>All expenses</h1><p className="muted">Every shared trip cost in one clean list.</p></div>
         <Link className="button" href={`/trips/${tripId}/expenses/new`}><Plus size={16} /> Add Expense</Link>
       </section>
+      <section className="expenseFilterPanel">
+        <div>
+          <p className="muted">{selectedCategory === "All" ? "Showing every category" : `Showing ${selectedCategory} expenses`}</p>
+          <b>{formatMoney(filteredTotal, trip.currency)}</b>
+        </div>
+        <div className="categoryFilterRail" aria-label="Filter expenses by category">
+          {categories.map((category) => {
+            const visual = category === "All" ? { icon: "✨", tone: "sky" } : categoryImages[category] || categoryImages.Other;
+            const isActive = selectedCategory === category;
+            const href = category === "All" ? `/trips/${tripId}/expenses` : `/trips/${tripId}/expenses?category=${encodeURIComponent(category)}`;
+            return (
+              <Link className={`categoryFilterChip ${isActive ? "active" : ""}`} href={href} key={category}>
+                <span className={`expenseCategoryImage small ${visual.tone}`} aria-hidden="true">{visual.icon}</span>
+                <span>{category}</span>
+              </Link>
+            );
+          })}
+        </div>
+      </section>
       <div className="recentExpenseRows">
-        {expenses.length ? expenses.map((expense) => {
+        {filteredExpenses.length ? filteredExpenses.map((expense) => {
           const payer = members.find((member) => member.id === expense.paid_by_member_id);
           const visual = categoryImages[expense.category] || categoryImages.Other;
           return (
@@ -70,7 +96,7 @@ export function ExpenseListPage({ tripId }: { tripId: string }) {
               </span>
             </Link>
           );
-        }) : <div className="card empty"><div><h3>No expenses yet</h3><p className="muted">Add your first trip expense.</p></div></div>}
+        }) : <div className="card empty"><div><h3>No expenses found</h3><p className="muted">{selectedCategory === "All" ? "Add your first trip expense." : `No ${selectedCategory} expenses yet.`}</p></div></div>}
       </div>
     </AppShell>
   );

@@ -1177,6 +1177,66 @@ textarea:focus {
   gap: 14px;
 }
 
+.expenseFilterPanel {
+  display: grid;
+  gap: 12px;
+  border: 0.5px solid rgba(15, 23, 42, 0.08);
+  border-radius: 18px;
+  background: #ffffff;
+  margin-bottom: 14px;
+  padding: 14px;
+}
+
+.expenseFilterPanel > div:first-child {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.expenseFilterPanel .muted {
+  margin-bottom: 0;
+}
+
+.expenseFilterPanel b {
+  color: var(--ink);
+  font-size: 20px;
+  font-weight: 950;
+  white-space: nowrap;
+}
+
+.categoryFilterRail {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: none;
+}
+
+.categoryFilterRail::-webkit-scrollbar {
+  display: none;
+}
+
+.categoryFilterChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 999px;
+  background: #f8fafc;
+  color: #344054;
+  padding: 6px 10px 6px 6px;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.categoryFilterChip.active {
+  border-color: rgba(108, 99, 255, 0.3);
+  background: #ede9ff;
+  color: #5b21b6;
+}
+
 .recentExpenseRow {
   display: grid;
   grid-template-columns: 64px minmax(0, 1fr) auto;
@@ -1329,6 +1389,8 @@ textarea:focus {
 .simpleGraphRow {
   display: grid;
   gap: 7px;
+  border-radius: 12px;
+  padding: 2px;
 }
 
 .simpleGraphMeta {
@@ -2078,6 +2140,35 @@ textarea:focus {
     gap: 10px;
   }
 
+  .expenseFilterPanel {
+    border-radius: 14px;
+    margin-bottom: 10px;
+    padding: 10px;
+  }
+
+  .expenseFilterPanel > div:first-child {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .expenseFilterPanel b {
+    font-size: 17px;
+  }
+
+  .categoryFilterChip {
+    gap: 6px;
+    padding: 5px 9px 5px 5px;
+    font-size: 12px;
+  }
+
+  .categoryFilterChip .expenseCategoryImage.small {
+    width: 32px;
+    height: 32px;
+    border-radius: 11px;
+    font-size: 17px;
+  }
+
   .recentExpenseRow {
     grid-template-columns: 44px minmax(0, 1fr) auto;
     gap: 10px;
@@ -2443,12 +2534,25 @@ html[data-theme="dark"] .balanceAmount.negative {
 
 html[data-theme="dark"] .balanceMiniGrid span,
 html[data-theme="dark"] .recentExpenseRow,
+html[data-theme="dark"] .expenseFilterPanel,
 html[data-theme="dark"] .memberMeta > div,
 html[data-theme="dark"] .settlementCard,
 html[data-theme="dark"] .qrBox,
 html[data-theme="dark"] .receiptUpload {
   border-color: rgba(255, 255, 255, 0.08);
   background: rgba(255, 255, 255, 0.055);
+}
+
+html[data-theme="dark"] .categoryFilterChip {
+  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--ink);
+}
+
+html[data-theme="dark"] .categoryFilterChip.active {
+  border-color: rgba(167, 139, 250, 0.45);
+  background: rgba(108, 99, 255, 0.2);
+  color: #c4b5fd;
 }
 
 html[data-theme="dark"] .recentExpenseRow {

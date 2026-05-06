@@ -151,7 +151,7 @@ export function TripDashboardPage({ tripId }: { tripId: string }) {
                 </div>
                 <div className="simpleGraphRows">
                   {categoryChart.map((item, index) => (
-                    <div className="simpleGraphRow" key={item.category}>
+                    <Link className="simpleGraphRow" href={`/trips/${tripId}/expenses?category=${encodeURIComponent(item.category)}`} key={item.category}>
                       <div className="simpleGraphMeta">
                         <span><span aria-hidden="true">{item.visual.icon}</span>{item.category}</span>
                         <b>{formatMoney(item.amount, bundle.trip.currency)}</b>
@@ -160,7 +160,7 @@ export function TripDashboardPage({ tripId }: { tripId: string }) {
                         <div className={`simpleGraphFill tone${(index % 5) + 1}`} style={{ width: `${Math.max(8, (item.amount / maxCategoryAmount) * 100)}%` }} />
                       </div>
                       <small>{Math.round((item.amount / total) * 100)}% of total</small>
-                    </div>
+                    </Link>
                   ))}
                 </div>
               </div>
