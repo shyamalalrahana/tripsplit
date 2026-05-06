@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { ReceiptText, Users } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
+import { AvatarView } from "@/components/AvatarView";
 import { LoadingCard } from "@/components/LoadingCard";
 import { calculateBalances, formatMoney } from "@/lib/calculations";
 import { supabase } from "@/lib/supabase";
@@ -48,7 +49,7 @@ export function BalancesPage({ tripId }: { tripId: string }) {
           <article className="card balanceCard" key={item.member.id}>
             <div className="balanceMain">
               <div className="balancePerson">
-                <span className="avatar balanceAvatar" style={{ background: item.member.avatar_color || "#2563eb" }}>{item.member.name.slice(0, 2).toUpperCase()}</span>
+                <AvatarView className="avatar balanceAvatar" name={item.member.name} color={item.member.avatar_color} image={item.member.avatar_url} />
                 <div>
                   <h3>{item.member.name}</h3>
                   <span className={`badge ${item.balance > 0 ? "receive" : item.balance < 0 ? "owe" : "settled"}`}>{item.balance > 0 ? "Receive" : item.balance < 0 ? "Owes" : "Settled"}</span>
