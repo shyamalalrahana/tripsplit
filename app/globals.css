@@ -577,9 +577,9 @@ textarea:focus {
 
 .avatarVector {
   background-color: #ffffff;
-  background-position: center;
+  background-position: center 44%;
   background-repeat: no-repeat;
-  background-size: 84%;
+  background-size: 152%;
   border: 1px solid rgba(17, 24, 39, 0.08);
   isolation: isolate;
 }
@@ -1952,6 +1952,50 @@ textarea:focus {
   opacity: 1;
 }
 
+@media (min-width: 841px) {
+  .bottomNav {
+    right: auto;
+    bottom: 14px;
+    left: 50%;
+    width: min(520px, calc(100vw - 32px));
+    transform: translateX(-50%);
+    border: 0.5px solid rgba(0, 0, 0, 0.08);
+    border-radius: 18px;
+    padding: 7px;
+  }
+
+  .bottomNav a {
+    min-height: 46px;
+    padding: 4px 6px 6px;
+    font-size: 10px;
+  }
+
+  .bottomNav a svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .installTripCard {
+    max-width: 680px;
+    margin-right: auto;
+    margin-left: auto;
+    padding: 16px 18px;
+  }
+
+  .installTripCard h2 {
+    font-size: 18px;
+  }
+
+  .installTripCard .muted {
+    font-size: 13px;
+  }
+
+  .installInline .button {
+    min-height: 44px;
+    padding: 0 18px;
+  }
+}
+
 .expenseCategoryDot,
 .splitAvatar {
   border-radius: 13px;
@@ -2577,7 +2621,7 @@ html[data-theme="dark"] .categoryFilterChip.active {
 }
 
 html[data-theme="dark"] .avatarVector {
-  background: rgba(255, 255, 255, 0.06);
+  background-color: rgba(255, 255, 255, 0.92);
   border-color: rgba(255, 255, 255, 0.1);
 }
 
