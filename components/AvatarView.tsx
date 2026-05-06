@@ -2,7 +2,7 @@ import { initials } from "@/lib/avatar";
 
 function avatarAccent(name: string, color?: string | null) {
   if (color) return color;
-  const colors = ["#2563eb", "#6c63ff", "#0891b2", "#7c3aed", "#0f6bff"];
+  const colors = ["#10b981", "#14b8a6", "#22c55e", "#0ea5e9", "#6366f1"];
   const code = (name || "user").split("").reduce((sum, char) => sum + char.charCodeAt(0), 0);
   return colors[code % colors.length];
 }
@@ -25,19 +25,23 @@ export function AvatarView({
   return (
     <span className={`${className} avatarVector`} style={{ ["--avatar-accent" as string]: accent }} aria-label={`${name} avatar`}>
       <svg className="avatarIllustration" viewBox="0 0 96 96" aria-hidden="true">
-        <path className="avatarCapFill" d="M31 34c5-18 21-25 39-18 10 4 16 13 17 25-12 5-32 5-48-2l-29 4c1-7 8-11 21-9Z" />
-        <path className="avatarLine" d="M30 34c5-18 21-25 39-18 10 4 16 13 17 25" />
-        <path className="avatarLine avatarCap" d="M10 43c1-8 9-12 22-9 18 3 32 4 47 0 4-1 7 0 8 4-18 8-37 7-55 1l-22 4Z" />
-        <path className="avatarLine" d="M44 41c-3 6-4 12-2 18 2 8 10 11 17 7" />
-        <path className="avatarLine" d="M59 42c8-1 15 4 15 12 0 7-5 12-12 13" />
-        <path className="avatarLine" d="M61 51c2-1 4 0 5 2" />
-        <path className="avatarLine" d="M34 47c-4 3-8 3-12 1" />
-        <path className="avatarLine" d="M31 52c-2 4-5 7-8 10" />
-        <path className="avatarLine" d="M40 71c-10 2-17 8-21 19" />
-        <path className="avatarLine" d="M61 69c11 3 19 10 24 21" />
-        <path className="avatarLine" d="M42 78c8 5 17 5 25 0" />
+        <path className="avatarFace" d="M36 34c-7 4-10 12-10 25 0 20 12 33 30 33 15 0 26-10 30-27 6-1 10-6 10-13 0-8-6-13-14-11-11-14-29-18-46-7Z" />
+        <path className="avatarHair" d="M31 46c4-16 19-24 37-21 12 2 22 10 25 23-10-7-20-10-32-8-5 6-12 9-21 9 2-4 5-7 9-11-8 0-14 3-18 8Z" />
+        <path className="avatarCapFill" d="M19 37c2-17 16-27 36-27 20 0 36 12 41 34-10-5-22-7-35-5-14 2-29 1-42-2Z" />
+        <path className="avatarCapBill" d="M5 41c6-12 19-17 33-11 8 3 14 8 19 15-17 3-34 2-52-4Z" />
+        <path className="avatarStroke" d="M19 37c2-17 16-27 36-27 20 0 36 12 41 34" />
+        <path className="avatarStroke" d="M5 41c6-12 19-17 33-11 8 3 14 8 19 15-17 3-34 2-52-4Z" />
+        <path className="avatarStroke" d="M36 34c-7 4-10 12-10 25 0 20 12 33 30 33 15 0 26-10 30-27 6-1 10-6 10-13 0-8-6-13-14-11" />
+        <path className="avatarStroke" d="M31 46c4-16 19-24 37-21 12 2 22 10 25 23-10-7-20-10-32-8-5 6-12 9-21 9 2-4 5-7 9-11" />
+        <path className="avatarStroke avatarFaceLine" d="M39 56c4-2 8-2 12 0" />
+        <path className="avatarStroke avatarFaceLine" d="M59 56c4-2 8-2 12 0" />
+        <path className="avatarEye" d="M43 64c0 4 2 7 5 7s5-3 5-7-2-7-5-7-5 3-5 7Z" />
+        <path className="avatarEye" d="M64 64c0 4 2 7 5 7s5-3 5-7-2-7-5-7-5 3-5 7Z" />
+        <path className="avatarStroke avatarFaceLine" d="M57 67c-5 3-6 7-1 9" />
+        <path className="avatarMouth" d="M61 83c0 5 4 9 9 9s9-4 9-9-4-9-9-9-9 4-9 9Z" />
+        <circle className="avatarTongue" cx="70" cy="84" r="4" />
+        <text className="avatarCapText" x="48" y="29" textAnchor="middle">{initials(name)}</text>
       </svg>
-      <span className="avatarInitials" aria-hidden="true">{initials(name)}</span>
     </span>
   );
 }

@@ -576,53 +576,61 @@ textarea:focus {
 }
 
 .avatarVector {
-  background: #f8fbff;
-  border: 1px solid rgba(37, 99, 235, 0.14);
+  background: #f7faf9;
+  border: 1px solid rgba(17, 24, 39, 0.08);
   isolation: isolate;
 }
 
 .avatarIllustration {
   position: absolute;
-  inset: 9%;
+  inset: 5%;
   z-index: 1;
-  width: 82%;
-  height: 82%;
+  width: 90%;
+  height: 90%;
   pointer-events: none;
 }
 
-.avatarLine {
+.avatarStroke {
   fill: none;
-  stroke: var(--avatar-accent, #2563eb);
-  stroke-width: 4.8;
+  stroke: #111214;
+  stroke-width: 5.6;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
-.avatarCap {
-  stroke-width: 5.5;
+.avatarFaceLine {
+  stroke-width: 4.5;
 }
 
 .avatarCapFill {
-  fill: var(--avatar-accent, #2563eb);
-  opacity: 0.95;
+  fill: var(--avatar-accent, #10b981);
 }
 
-.avatarInitials {
-  position: absolute;
-  right: 4%;
-  bottom: 4%;
-  z-index: 2;
-  display: grid;
-  width: 32%;
-  height: 32%;
-  place-items: center;
-  border: 1.5px solid #ffffff;
-  border-radius: 999px;
-  background: var(--avatar-accent, #2563eb);
-  color: #ffffff;
-  font-size: 0.48em;
+.avatarCapBill {
+  fill: var(--avatar-accent, #10b981);
+}
+
+.avatarFace {
+  fill: #ffe7d7;
+}
+
+.avatarHair,
+.avatarEye,
+.avatarMouth {
+  fill: #111214;
+}
+
+.avatarTongue {
+  fill: #ff9d87;
+}
+
+.avatarCapText {
+  fill: #111214;
+  font-size: 16px;
   font-weight: 950;
-  line-height: 1;
+  letter-spacing: 0;
+  dominant-baseline: middle;
+  font-family: var(--font-sans);
 }
 
 .bottomNav {
