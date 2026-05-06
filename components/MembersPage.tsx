@@ -70,7 +70,10 @@ export function MembersPage({ tripId }: { tripId: string }) {
       avatar_color: String(form.get("avatar_color") || "#2563eb"),
       avatar_url: avatarUrl || null
     };
-    const { error } = await supabase.from("trip_members").update(payload).eq("id", member.id);
+    const { error } = await supabase.rpc("update_trip_member_profile", {
+      member_id_input: member.id,
+      profile_input: payload
+    });
     if (error) {
       setMessage(error.message);
       setSavingMemberId(null);
@@ -100,7 +103,9 @@ export function MembersPage({ tripId }: { tripId: string }) {
       return;
     }
     if (!confirm(`Delete ${member.name} from this trip?`)) return;
-    const { error } = await supabase.from("trip_members").delete().eq("id", member.id);
+    const { error } = await supabase.rpc("delete_trip_member_as_creator", {
+      member_id_input: member.id
+    });
     if (error) {
       setMessage(error.message);
       return;
