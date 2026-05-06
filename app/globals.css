@@ -576,61 +576,12 @@ textarea:focus {
 }
 
 .avatarVector {
-  background: #f7faf9;
+  background-color: #ffffff;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 84%;
   border: 1px solid rgba(17, 24, 39, 0.08);
   isolation: isolate;
-}
-
-.avatarIllustration {
-  position: absolute;
-  inset: 5%;
-  z-index: 1;
-  width: 90%;
-  height: 90%;
-  pointer-events: none;
-}
-
-.avatarStroke {
-  fill: none;
-  stroke: #111214;
-  stroke-width: 5.6;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-.avatarFaceLine {
-  stroke-width: 4.5;
-}
-
-.avatarCapFill {
-  fill: var(--avatar-accent, #10b981);
-}
-
-.avatarCapBill {
-  fill: var(--avatar-accent, #10b981);
-}
-
-.avatarFace {
-  fill: #ffe7d7;
-}
-
-.avatarHair,
-.avatarEye,
-.avatarMouth {
-  fill: #111214;
-}
-
-.avatarTongue {
-  fill: #ff9d87;
-}
-
-.avatarCapText {
-  fill: #111214;
-  font-size: 16px;
-  font-weight: 950;
-  letter-spacing: 0;
-  dominant-baseline: middle;
-  font-family: var(--font-sans);
 }
 
 .bottomNav {
