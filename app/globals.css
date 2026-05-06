@@ -2102,6 +2102,88 @@ textarea:focus {
     width: 13px;
     height: 13px;
   }
+
+  .memberCard {
+    gap: 9px;
+    border-radius: 13px;
+    padding: 10px;
+  }
+
+  .memberCard::before {
+    height: 3px;
+  }
+
+  .memberHero {
+    grid-template-columns: 40px minmax(0, 1fr) auto;
+    gap: 9px;
+  }
+
+  .memberHero h3 {
+    overflow: hidden;
+    margin-bottom: 1px;
+    font-size: 15px;
+    line-height: 1.1;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .memberHero .muted {
+    font-size: 11px;
+    line-height: 1.2;
+  }
+
+  .memberHero .badge {
+    padding: 4px 7px;
+    font-size: 10px;
+  }
+
+  .memberAvatar {
+    width: 40px;
+    height: 40px;
+    border-width: 2px;
+    border-radius: 13px;
+    font-size: 13px;
+    box-shadow: none;
+  }
+
+  .memberMeta {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .memberMeta > div {
+    border-radius: 10px;
+    padding: 7px;
+  }
+
+  .memberMeta p {
+    margin-bottom: 2px;
+    font-size: 10px;
+  }
+
+  .memberMeta b {
+    display: block;
+    overflow: hidden;
+    font-size: 11px;
+    line-height: 1.2;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .memberActions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+  }
+
+  .memberActions .buttonSecondary,
+  .memberActions .buttonDanger {
+    width: auto;
+    min-height: 34px;
+    border-radius: 10px;
+    padding: 7px 9px;
+    font-size: 12px;
+  }
 }
 
 html[data-theme="dark"] {

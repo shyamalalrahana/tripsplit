@@ -20,17 +20,22 @@ export function MembersPage({ tripId }: { tripId: string }) {
   const [editingMemberId, setEditingMemberId] = useState<string | null>(null);
   const [message, setMessage] = useState("");
   const [savingMemberId, setSavingMemberId] = useState<string | null>(null);
+  const [currentProfileId, setCurrentProfileId] = useState<string | null>(null);
 
   useEffect(() => {
     load();
   }, [tripId]);
 
   async function load() {
-    const [tripResult, membersResult, expensesResult] = await Promise.all([
+    const [tripResult, membersResult, expensesResult, authResult] = await Promise.all([
       supabase.from("trips").select("*").eq("id", tripId).single(),
       supabase.from("trip_members").select("*").eq("trip_id", tripId).order("joined_at"),
-      supabase.from("expenses").select(expenseListColumns).eq("trip_id", tripId)
+      supabase.from("expenses").select(expenseListColumns).eq("trip_id", tripId),
+      supabase.auth.getUser()
     ]);
+    const { data: profile } = authResult.data.user
+      ? await supabase.from("profiles").select("id").eq("user_id", authResult.data.user.id).maybeSingle()
+      : { data: null };
     const expensesData = expensesResult.data || [];
     const expenseIds = (expensesData || []).map((expense) => expense.id);
     const { data: splitsData } = expenseIds.length ? await supabase.from("expense_splits").select("*").in("expense_id", expenseIds) : { data: [] };
@@ -38,10 +43,15 @@ export function MembersPage({ tripId }: { tripId: string }) {
     setMembers(membersResult.data || []);
     setExpenses(expensesData as Expense[]);
     setSplits(splitsData || []);
+    setCurrentProfileId(profile?.id || null);
   }
 
   async function updateMember(event: React.FormEvent<HTMLFormElement>, member: TripMember) {
     event.preventDefault();
+    if (!trip || trip.created_by !== currentProfileId) {
+      setMessage("Only the trip creator can edit members.");
+      return;
+    }
     if (savingMemberId) return;
     setMessage("");
     setSavingMemberId(member.id);
@@ -75,6 +85,10 @@ export function MembersPage({ tripId }: { tripId: string }) {
 
   async function deleteMember(member: TripMember) {
     setMessage("");
+    if (!trip || trip.created_by !== currentProfileId) {
+      setMessage("Only the trip creator can delete members.");
+      return;
+    }
     if (member.role === "owner") {
       setMessage("Trip owner cannot be removed from the members page.");
       return;
@@ -96,11 +110,12 @@ export function MembersPage({ tripId }: { tripId: string }) {
 
   if (!trip) return <AppShell tripId={tripId}><LoadingCard label="Loading members" /></AppShell>;
   const balances = calculateBalances(members, expenses, splits);
+  const canManageMembers = Boolean(currentProfileId && trip.created_by === currentProfileId);
 
   return (
     <AppShell tripId={tripId}>
       <section className="sectionHead">
-        <div><p className="kicker">Members</p><h1>Trip members</h1><p className="muted">Manage your trip crew, update names and phone numbers, and remove unused members.</p></div>
+        <div><p className="kicker">Members</p><h1>Trip members</h1><p className="muted">{canManageMembers ? "Edit or remove unused members from this trip." : "View who joined this trip and each person’s balance."}</p></div>
       </section>
       {message ? <p className="badge pending">{message}</p> : null}
       <div className="grid2">
@@ -140,10 +155,12 @@ export function MembersPage({ tripId }: { tripId: string }) {
                     <div><p className="muted">Paid</p><b>{formatMoney(balance?.paid || 0, trip.currency)}</b></div>
                     <div><p className="muted">Share</p><b>{formatMoney(balance?.share || 0, trip.currency)}</b></div>
                   </div>
-                  <div className="cluster">
-                    <button className="buttonSecondary" onClick={() => setEditingMemberId(member.id)} type="button"><Pencil size={16} /> Edit</button>
-                    <button className="buttonDanger" onClick={() => deleteMember(member)} type="button"><Trash2 size={16} /> Delete</button>
-                  </div>
+                  {canManageMembers ? (
+                    <div className="cluster memberActions">
+                      <button className="buttonSecondary" onClick={() => setEditingMemberId(member.id)} type="button"><Pencil size={16} /> Edit</button>
+                      <button className="buttonDanger" onClick={() => deleteMember(member)} type="button"><Trash2 size={16} /> Delete</button>
+                    </div>
+                  ) : null}
                 </>
               )}
             </form>
