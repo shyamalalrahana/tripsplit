@@ -12,12 +12,6 @@ import type { Trip, TripMember } from "@/lib/types";
 
 const categories = ["Food", "Petrol", "Hotel", "Tickets", "Shopping", "Parking", "Other"];
 
-function splitEmoji(index: number, selected: boolean) {
-  if (selected) return "✅";
-  const icons = ["🙂", "🧳", "🚗", "🍽️", "🏨", "🎒", "🌿", "☕"];
-  return icons[index % icons.length];
-}
-
 export function AddExpensePage({ tripId }: { tripId: string }) {
   const router = useRouter();
   const [trip, setTrip] = useState<Trip | null>(null);
@@ -147,7 +141,7 @@ export function AddExpensePage({ tripId }: { tripId: string }) {
             <span>{selected.length}/{members.length}</span>
           </div>
           <div className="splitMemberGrid">
-            {members.map((member, index) => {
+            {members.map((member) => {
               const isSelected = selected.includes(member.id);
               return (
                 <label className={`splitMemberOption ${isSelected ? "selected" : ""}`} key={member.id}>
@@ -158,7 +152,6 @@ export function AddExpensePage({ tripId }: { tripId: string }) {
                     type="checkbox"
                   />
                   <span className="splitCheckMark" aria-hidden="true" />
-                  <span className="splitEmoji" aria-hidden="true">{splitEmoji(index, isSelected)}</span>
                   <AvatarView className="splitAvatar" name={member.name} color={member.avatar_color} image={member.avatar_url} />
                   <span className="splitMemberText">
                     <strong>{member.name}</strong>
