@@ -1018,8 +1018,8 @@ textarea:focus {
 
 .splitMemberOption {
   display: grid;
-  grid-template-columns: auto auto minmax(0, 1fr);
-  gap: 10px;
+  grid-template-columns: auto auto auto minmax(0, 1fr);
+  gap: 8px;
   align-items: center;
   min-height: 56px;
   border: 0.5px solid rgba(15, 23, 42, 0.08);
@@ -1065,13 +1065,27 @@ textarea:focus {
   transform: rotate(-45deg) translateY(-1px);
 }
 
+.splitEmoji {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border-radius: 11px;
+  background: #f1f5ff;
+  font-size: 17px;
+  line-height: 1;
+}
+
+.splitMemberOption.selected .splitEmoji {
+  background: rgba(108, 99, 255, 0.12);
+}
+
 .splitAvatar {
   position: relative;
   overflow: hidden;
   display: grid;
-  width: 34px;
-  height: 34px;
-  place-items: center;
+  width: 32px;
+  height: 32px;
   border-radius: 12px;
   color: #ffffff;
   font-size: 12px;
@@ -2652,6 +2666,14 @@ html[data-theme="dark"] .splitMemberOption.selected,
 html[data-theme="dark"] .cat-item.sel {
   border-color: rgba(167, 139, 250, 0.56);
   background: rgba(108, 99, 255, 0.18);
+}
+
+html[data-theme="dark"] .splitEmoji {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+html[data-theme="dark"] .splitMemberOption.selected .splitEmoji {
+  background: rgba(167, 139, 250, 0.18);
 }
 
 html[data-theme="dark"] .loadingSpinner {

@@ -12,6 +12,12 @@ import type { Trip, TripMember } from "@/lib/types";
 
 const categories = ["Food", "Petrol", "Hotel", "Tickets", "Shopping", "Parking", "Other"];
 
+function splitEmoji(index: number, selected: boolean) {
+  if (selected) return "✅";
+  const icons = ["🙂", "🧳", "🚗", "🍽️", "🏨", "🎒", "🌿", "☕"];
+  return icons[index % icons.length];
+}
+
 export function AddExpensePage({ tripId }: { tripId: string }) {
   const router = useRouter();
   const [trip, setTrip] = useState<Trip | null>(null);
@@ -141,32 +147,36 @@ export function AddExpensePage({ tripId }: { tripId: string }) {
             <span>{selected.length}/{members.length}</span>
           </div>
           <div className="splitMemberGrid">
-            {members.map((member) => (
-              <label className={`splitMemberOption ${selected.includes(member.id) ? "selected" : ""}`} key={member.id}>
-                <input
-                  className="splitCheckbox"
-                  checked={selected.includes(member.id)}
-                  onChange={(event) => setSelected(event.target.checked ? [...selected, member.id] : selected.filter((id) => id !== member.id))}
-                  type="checkbox"
-                />
-                <span className="splitCheckMark" aria-hidden="true" />
-                <AvatarView className="splitAvatar" name={member.name} color={member.avatar_color} image={member.avatar_url} />
-                <span className="splitMemberText">
-                  <strong>{member.name}</strong>
-                  <small>{selected.includes(member.id) ? "Selected" : "Tap to include"}</small>
-                </span>
-                {splitType !== "equal" ? (
+            {members.map((member, index) => {
+              const isSelected = selected.includes(member.id);
+              return (
+                <label className={`splitMemberOption ${isSelected ? "selected" : ""}`} key={member.id}>
                   <input
-                    className="splitValue"
-                    min="0"
-                    onChange={(event) => setCustomValues({ ...customValues, [member.id]: Number(event.target.value || 0) })}
-                    placeholder={splitType === "percentage" ? "%" : trip.currency}
-                    step="0.01"
-                    type="number"
+                    className="splitCheckbox"
+                    checked={isSelected}
+                    onChange={(event) => setSelected(event.target.checked ? [...selected, member.id] : selected.filter((id) => id !== member.id))}
+                    type="checkbox"
                   />
-                ) : null}
-              </label>
-            ))}
+                  <span className="splitCheckMark" aria-hidden="true" />
+                  <span className="splitEmoji" aria-hidden="true">{splitEmoji(index, isSelected)}</span>
+                  <AvatarView className="splitAvatar" name={member.name} color={member.avatar_color} image={member.avatar_url} />
+                  <span className="splitMemberText">
+                    <strong>{member.name}</strong>
+                    <small>{isSelected ? "Included in split" : "Tap to include"}</small>
+                  </span>
+                  {splitType !== "equal" ? (
+                    <input
+                      className="splitValue"
+                      min="0"
+                      onChange={(event) => setCustomValues({ ...customValues, [member.id]: Number(event.target.value || 0) })}
+                      placeholder={splitType === "percentage" ? "%" : trip.currency}
+                      step="0.01"
+                      type="number"
+                    />
+                  ) : null}
+                </label>
+              );
+            })}
           </div>
         </div>
 
