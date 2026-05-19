@@ -1,8 +1,12 @@
 import type { Metadata, Viewport } from "next";
-import { Plus_Jakarta_Sans } from "next/font/google";
+import { Poppins } from "next/font/google";
 import "./globals.css";
 
-const plusJakarta = Plus_Jakarta_Sans({ subsets: ["latin"] });
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  display: "swap"
+});
 const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://tripsplits.in";
 
 export const metadata: Metadata = {
@@ -13,7 +17,7 @@ export const metadata: Metadata = {
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
-    statusBarStyle: "default",
+    statusBarStyle: "black-translucent",
     title: "TripSplits"
   },
   formatDetection: {
@@ -50,17 +54,16 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#6c63ff"
+  themeColor: "#0B1020"
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const themeScript = `
     try {
       const savedTheme = localStorage.getItem("tripsplits-theme");
-      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      document.documentElement.dataset.theme = savedTheme || (prefersDark ? "dark" : "light");
+      document.documentElement.dataset.theme = savedTheme || "dark";
     } catch (error) {
-      document.documentElement.dataset.theme = "light";
+      document.documentElement.dataset.theme = "dark";
     }
   `;
 
@@ -69,7 +72,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
-      <body className={plusJakarta.className}>{children}</body>
+      <body className={`${poppins.className} tripsplit-canvas`}>{children}</body>
     </html>
   );
 }

@@ -44,11 +44,11 @@ export function AppShell({
 
   const nav = tripId
     ? [
-        { href: `/trips/${tripId}`, label: "Trip", icon: WalletCards },
-        { href: `/trips/${tripId}/members`, label: "Members", icon: Users },
-        { href: `/trips/${tripId}/expenses/new`, label: "Add", icon: Plus },
-        { href: `/trips/${tripId}/balances`, label: "Balances", icon: Scale },
-        { href: `/trips/${tripId}/settlements`, label: "Settle", icon: ReceiptText }
+        { href: `/trips/${tripId}`,             label: "Trip",     icon: WalletCards },
+        { href: `/trips/${tripId}/members`,      label: "Members",  icon: Users },
+        { href: `/trips/${tripId}/expenses/new`, label: "Add",      icon: Plus, isAdd: true },
+        { href: `/trips/${tripId}/balances`,     label: "Balances", icon: Scale },
+        { href: `/trips/${tripId}/settlements`,  label: "Settle",   icon: ReceiptText }
       ]
     : [];
 
@@ -56,17 +56,34 @@ export function AppShell({
     <div className="shell">
       <header className="topbar">
         <Link className="brand" href="/">
-          <Image className="brandLogo" src="/tripsplits-logo.png" alt="TripSplits.in" width={620} height={150} priority />
+          <Image
+            className="brandLogo"
+            src="/tripsplits-logo.png"
+            alt="TripSplits.in"
+            width={620}
+            height={150}
+            priority
+          />
           <span className="brandFallback">
             <span className="brandTitle">TripSplits</span>
-            <span className="brandSub">Trip Money Manager</span>
           </span>
         </Link>
         <div className="topActions">
           <ThemeToggle />
           <div className="profileMenu">
-            <button className="profileButton" onClick={() => setMenuOpen((open) => !open)} type="button" aria-expanded={menuOpen} aria-label="Open profile menu">
-              <AvatarView className="profileButtonAvatar" name={profile?.name || "User"} color={profile?.avatar_color} image={profile?.avatar_url} />
+            <button
+              className="profileButton"
+              onClick={() => setMenuOpen((open) => !open)}
+              type="button"
+              aria-expanded={menuOpen}
+              aria-label="Open profile menu"
+            >
+              <AvatarView
+                className="profileButtonAvatar"
+                name={profile?.name || "User"}
+                color={profile?.avatar_color}
+                image={profile?.avatar_url}
+              />
               <span className="profileButtonText">
                 <strong>{profile?.name || "Profile"}</strong>
                 <small>Account</small>
@@ -74,12 +91,20 @@ export function AppShell({
             </button>
             {menuOpen ? (
               <div className="profileDropdown">
-                <Link className="profileDropdownItem" href="/profile" onClick={() => setMenuOpen(false)}>
-                  <UserRound size={17} />
+                <Link
+                  className="profileDropdownItem"
+                  href="/profile"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  <UserRound size={17} strokeWidth={1.6} />
                   <span>Profile</span>
                 </Link>
-                <button className="profileDropdownItem dangerText" onClick={logout} type="button">
-                  <LogOut size={17} />
+                <button
+                  className="profileDropdownItem dangerText"
+                  onClick={logout}
+                  type="button"
+                >
+                  <LogOut size={17} strokeWidth={1.6} />
                   <span>Logout</span>
                 </button>
               </div>
@@ -87,15 +112,41 @@ export function AppShell({
           </div>
         </div>
       </header>
+
       <main className="page">{children}</main>
+
       {tripId ? (
         <nav className="bottomNav" aria-label="Trip navigation">
           {nav.map((item) => {
             const Icon = item.icon;
-            const isActive = item.href === `/trips/${tripId}` ? pathname === item.href : pathname.startsWith(item.href);
+            const isActive =
+              item.href === `/trips/${tripId}`
+                ? pathname === item.href
+                : pathname.startsWith(item.href);
+
+            if (item.isAdd) {
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="bottomNavAdd"
+                  aria-label={item.label}
+                >
+                  <Icon size={22} strokeWidth={2.2} />
+                </Link>
+              );
+            }
+
             return (
-              <Link aria-current={isActive ? "page" : undefined} className={isActive ? "active" : ""} href={item.href} key={item.href}>
-                <Icon size={17} />
+              <Link
+                key={item.href}
+                href={item.href}
+                aria-current={isActive ? "page" : undefined}
+                className={isActive ? "active" : ""}
+              >
+                <span className="navIcon">
+                  <Icon size={18} strokeWidth={1.6} />
+                </span>
                 <span>{item.label}</span>
               </Link>
             );

@@ -46,7 +46,7 @@ export function AuthPage() {
         user_id: result.data.user.id,
         email,
         name: name || email.split("@")[0],
-        avatar_color: "#2563eb",
+        avatar_color: "#5B8CFF",
         avatar_url: avatarUrl || null
       }, { onConflict: "user_id" });
     }
@@ -57,53 +57,118 @@ export function AuthPage() {
   return (
     <main className="page">
       <section className="heroGrid">
-        <div className="cardSoft">
+        {/* ── Hero panel ── */}
+        <div className="cardSoft" style={{ display: "flex", flexDirection: "column", gap: 16 }}>
           <div className="authHeroTop">
-            <Image className="authLogo" src="/tripsplits-logo.png" alt="TripSplits.in" width={620} height={150} priority />
+            <Image
+              className="authLogo"
+              src="/tripsplits-logo.png"
+              alt="TripSplits.in"
+              width={620}
+              height={150}
+              priority
+            />
             <ThemeToggle />
           </div>
-          <p className="kicker">Trip money, finally clear</p>
-          <h1>Split trips with friends and settle by UPI QR</h1>
+          <p className="kicker">Trip money, clear</p>
+          <h1>Split trips with friends. Settle by UPI&nbsp;QR.</h1>
           <p className="muted">
-            Create a trip group, invite friends, track who paid, and show the simplest payment plan.
-            Payment confirmation is manual for now.
+            Create a trip group, invite friends, track who paid, and get the simplest payment plan.
+            Confirm payments manually — no bank access needed.
           </p>
+
+          {/* Decorative stat pills */}
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 8 }}>
+            {[
+              { label: "No bank access", color: "var(--tint-green)",  fg: "var(--accent-green)"  },
+              { label: "UPI QR settle",  color: "var(--tint-blue)",   fg: "var(--accent-blue)"   },
+              { label: "INR · USD · EUR",color: "var(--tint-purple)", fg: "var(--accent-purple)" },
+            ].map((p) => (
+              <span key={p.label} style={{
+                padding: "5px 12px", borderRadius: 999,
+                background: p.color, color: p.fg,
+                fontSize: 12, fontWeight: 600,
+                border: "1px solid " + p.color,
+              }}>{p.label}</span>
+            ))}
+          </div>
         </div>
-        <form className="card grid" onSubmit={submit}>
+
+        {/* ── Auth form ── */}
+        <form className="card grid" onSubmit={submit} style={{ gap: 16 }}>
           <div>
             <p className="kicker">{mode === "login" ? "Welcome back" : "Create account"}</p>
-            <h2>{mode === "login" ? "Login" : "Sign up"}</h2>
+            <h2 style={{ marginTop: 4 }}>{mode === "login" ? "Login" : "Sign up"}</h2>
           </div>
+
           {!hasSupabaseEnv() ? (
             <div className="badge pending">Add Supabase env vars before login works</div>
           ) : null}
+
           {mode === "signup" ? (
             <>
               <div className="field">
                 <label>Name</label>
-                <input value={name} onChange={(event) => setName(event.target.value)} placeholder="Rahul" />
+                <input
+                  value={name}
+                  onChange={(event) => setName(event.target.value)}
+                  placeholder="Rahul"
+                />
               </div>
               <div className="field">
-                <label>Profile picture optional</label>
+                <label>Profile picture (optional)</label>
                 <input accept="image/*" name="avatar" type="file" />
               </div>
             </>
           ) : null}
+
           <div className="field">
             <label>Email</label>
-            <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} required />
+            <input
+              type="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              placeholder="you@email.com"
+              required
+            />
           </div>
           <div className="field">
             <label>Password</label>
-            <input type="password" value={password} onChange={(event) => setPassword(event.target.value)} required minLength={6} />
+            <input
+              type="password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              placeholder="••••••••"
+              required
+              minLength={6}
+            />
           </div>
-          {message ? <p className="muted">{message}</p> : null}
+
+          {message ? (
+            <p className="muted" style={{ color: "var(--accent-orange)" }}>{message}</p>
+          ) : null}
+
           <button className="button" disabled={loading} type="submit">
-            {loading ? "Please wait..." : mode === "login" ? "Login" : "Create account"}
+            {loading
+              ? "Please wait..."
+              : mode === "login"
+              ? "Login to your trips"
+              : "Create account"}
           </button>
-          <button className="buttonSecondary" type="button" onClick={() => setMode(mode === "login" ? "signup" : "login")}>
-            {mode === "login" ? "Need an account? Sign up" : "Already have an account? Login"}
+
+          <button
+            className="buttonSecondary"
+            type="button"
+            onClick={() => setMode(mode === "login" ? "signup" : "login")}
+          >
+            {mode === "login"
+              ? "New to TripSplits? Create an account"
+              : "Already have an account? Login"}
           </button>
+
+          <p style={{ textAlign: "center", color: "var(--fg-3)", fontSize: 11, fontWeight: 500, lineHeight: 1.5 }}>
+            UPI QR payments work with GPay, PhonePe, Paytm, BHIM — any UPI app.
+          </p>
         </form>
       </section>
     </main>
