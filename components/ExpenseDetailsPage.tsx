@@ -42,15 +42,24 @@ export function ExpenseDetailsPage({ tripId, expenseId }: { tripId: string; expe
 
   return (
     <AppShell tripId={tripId}>
-      <section className="card grid">
+      <section className="card" style={{ display: "flex", flexDirection: "column", gap: 16 }}>
         <div className="sectionHead">
-          <div><p className="kicker">{expense.category}</p><h1>{expense.title}</h1><p className="muted">{payer?.name || "Someone"} paid {formatMoney(Number(expense.amount), trip.currency)}</p></div>
+          <div>
+            <p className="kicker">{expense.category}</p>
+            <h1>{expense.title}</h1>
+            <p className="muted">{payer?.name || "Someone"} paid {formatMoney(Number(expense.amount), trip.currency)}</p>
+          </div>
           <button className="buttonDanger" onClick={remove} type="button">Delete</button>
         </div>
-        <div className="grid">
+        <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
           {splits.map((split) => {
             const member = members.find((item) => item.id === split.member_id);
-            return <div className="card row" key={split.id}><span>{member?.name}</span><b>{formatMoney(Number(split.split_amount), trip.currency)}</b></div>;
+            return (
+              <div className="row" key={split.id}>
+                <span style={{ fontFamily: "var(--font-display)", fontWeight: 600, fontSize: 14 }}>{member?.name}</span>
+                <b style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontVariantNumeric: "tabular-nums" }}>{formatMoney(Number(split.split_amount), trip.currency)}</b>
+              </div>
+            );
           })}
         </div>
         {expense.receipt_url ? (

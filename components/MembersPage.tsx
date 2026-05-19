@@ -120,7 +120,11 @@ export function MembersPage({ tripId }: { tripId: string }) {
   return (
     <AppShell tripId={tripId}>
       <section className="sectionHead">
-        <div><p className="kicker">Members</p><h1>Trip members</h1><p className="muted">{canManageMembers ? "Edit or remove unused members from this trip." : "View who joined this trip and each person’s balance."}</p></div>
+        <div>
+          <p className="kicker">Members</p>
+          <h1>Trip members</h1>
+          <p className="muted">{canManageMembers ? "Edit or remove unused members from this trip." : "View who joined this trip and each person's balance."}</p>
+        </div>
       </section>
       {message ? <p className="badge pending">{message}</p> : null}
       <div className="grid2">
@@ -129,12 +133,12 @@ export function MembersPage({ tripId }: { tripId: string }) {
           const isEditing = editingMemberId === member.id;
           const balanceStatus = (balance?.balance || 0) > 0 ? "receive" : (balance?.balance || 0) < 0 ? "owe" : "settled";
           return (
-            <form className="memberCard grid" onSubmit={(event) => updateMember(event, member)} key={member.id}>
+            <form className="memberCard" style={{ display: "flex", flexDirection: "column", gap: 12 }} onSubmit={(event) => updateMember(event, member)} key={member.id}>
               <div className="memberHero">
                 <AvatarView className="memberAvatar" name={member.name} color={member.avatar_color} image={member.avatar_url} />
                 <div>
-                  <h3>{member.name}</h3>
-                  <p className="muted">{member.role === "owner" ? "Trip owner" : member.role === "guest" ? "Joined by invite" : "Trip member"}</p>
+                  <h3 style={{ marginBottom: 4 }}>{member.name}</h3>
+                  <p className="muted" style={{ fontSize: 12 }}>{member.role === "owner" ? "Trip owner" : member.role === "guest" ? "Joined by invite" : "Trip member"}</p>
                 </div>
                 <span className={`badge ${balanceStatus}`}>
                   {formatMoney(Math.abs(balance?.balance || 0), trip.currency)}

@@ -121,8 +121,12 @@ export function AddExpensePage({ tripId }: { tripId: string }) {
 
   return (
     <AppShell tripId={tripId}>
-      <form className="card grid" onSubmit={submit}>
-        <div><p className="kicker">Manual expense</p><h1>Add expense</h1><p className="muted">Rahul paid for Petrol. Select who shared it and TripSplits will calculate balances.</p></div>
+      <form className="card" style={{ display: "flex", flexDirection: "column", gap: 20 }} onSubmit={submit}>
+        <div>
+          <p className="kicker">Manual expense</p>
+          <h1>Add expense</h1>
+          <p className="muted">Rahul paid for Petrol. Select who shared it and TripSplits will calculate balances.</p>
+        </div>
         <div className="grid2">
           <div className="field"><label>Expense title</label><input name="title" placeholder="Petrol" required /></div>
           <div className="field"><label>Amount</label><input name="amount" type="number" min="0.01" step="0.01" required /></div>
@@ -132,11 +136,11 @@ export function AddExpensePage({ tripId }: { tripId: string }) {
           <div className="field"><label>Split type</label><select value={splitType} onChange={(event) => setSplitType(event.target.value as typeof splitType)}><option value="equal">Equal split</option><option value="custom">Custom amount</option><option value="percentage">Percentage split</option></select></div>
         </div>
 
-        <div className="splitPanel grid">
+        <div className="splitPanel">
           <div className="splitPanelHeader">
             <div>
               <h3>Split members</h3>
-              <p className="muted">{splitHint}</p>
+              <p className="muted" style={{ fontSize: 13 }}>{splitHint}</p>
             </div>
             <span>{selected.length}/{members.length}</span>
           </div>
@@ -174,10 +178,11 @@ export function AddExpensePage({ tripId }: { tripId: string }) {
         </div>
 
         <div className="field"><label>Notes optional</label><textarea name="notes" placeholder="Rahul paid for Petrol" /></div>
+
         <div className="receiptUpload">
           <div>
             <h3>Receipt photo optional</h3>
-            <p className="muted">Take a photo or choose an image from your gallery.</p>
+            <p className="muted" style={{ fontSize: 12 }}>Take a photo or choose an image from your gallery.</p>
             <label className="buttonSecondary receiptUploadButton">
               {receiptPreview ? "Change receipt photo" : "Add receipt photo"}
               <input accept="image/*" capture="environment" name="receipt" onChange={previewReceipt} type="file" />
@@ -185,6 +190,7 @@ export function AddExpensePage({ tripId }: { tripId: string }) {
           </div>
           {receiptPreview ? <img alt="Receipt preview" className="receiptPreview" src={receiptPreview} /> : <div className="receiptPlaceholder">Receipt</div>}
         </div>
+
         {message ? <p className="badge pending">{message}</p> : null}
         <button className="button" disabled={saving} type="submit">{saving ? "Saving..." : "Save expense"}</button>
       </form>

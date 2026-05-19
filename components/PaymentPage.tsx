@@ -55,13 +55,15 @@ export function PaymentPage({ tripId, settlementId }: { tripId: string; settleme
 
   return (
     <AppShell tripId={tripId}>
-      <section className="heroGrid">
-        <div className="card grid">
-          <p className="kicker">UPI QR payment</p>
-          <h1>{from.name} pays {to.name}</h1>
-          <h2>{formatMoney(Number(settlement.amount), trip.currency)}</h2>
+      <div className="heroGrid">
+        <div className="card" style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          <div>
+            <p className="kicker">UPI QR payment</p>
+            <h1>{from.name} pays {to.name}</h1>
+            <h2 style={{ marginTop: 4 }}>{formatMoney(Number(settlement.amount), trip.currency)}</h2>
+          </div>
           <p className="muted">Scan QR to pay with any UPI app. TripSplits cannot automatically verify payment yet, so confirmation is manual.</p>
-          <div className="grid">
+          <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
             <div className="row"><span>Receiver</span><b>{to.name}</b></div>
             <div className="row"><span>UPI ID</span><b>{to.upi_id || "Not added"}</b></div>
             <div className="row"><span>Payment note</span><b>{note}</b></div>
@@ -73,14 +75,14 @@ export function PaymentPage({ tripId, settlementId }: { tripId: string; settleme
             <button className="buttonGreen" onClick={confirmReceived} type="button">Receiver Confirmed</button>
           </div>
         </div>
-        <div className="card grid">
+        <div className="card" style={{ display: "flex", flexDirection: "column", gap: 16 }}>
           <h2>Scan QR</h2>
           <div className="qrBox">
             {upiLink ? <QRCodeSVG value={upiLink} size={240} includeMargin /> : <p className="muted">No QR yet. Add receiver UPI ID.</p>}
           </div>
           <p className="muted">Works with Google Pay, PhonePe, Paytm, BHIM, and other UPI apps.</p>
         </div>
-      </section>
+      </div>
     </AppShell>
   );
 }

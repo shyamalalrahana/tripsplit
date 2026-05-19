@@ -60,7 +60,11 @@ export function SettlementsPage({ tripId }: { tripId: string }) {
   return (
     <AppShell tripId={tripId}>
       <section className="sectionHead">
-        <div><p className="kicker">Settlement</p><h1>Final payment plan</h1><p className="muted">Scan QR to pay with any UPI app. Payment confirmation is manual for now.</p></div>
+        <div>
+          <p className="kicker">Settlement</p>
+          <h1>Final payment plan</h1>
+          <p className="muted">Scan QR to pay with any UPI app. Payment confirmation is manual for now.</p>
+        </div>
       </section>
       <div className="settlementList">
         {drafts.length ? drafts.map((draft) => {
@@ -80,18 +84,27 @@ export function SettlementsPage({ tripId }: { tripId: string }) {
               </div>
               <div className="settlementMain">
                 <div>
-                  <h3>{from?.name} pays {to?.name}</h3>
-                  <p className="muted">{to?.name} should receive from {from?.name}</p>
+                  <h3 style={{ marginBottom: 4 }}>{from?.name} pays {to?.name}</h3>
+                  <p className="muted" style={{ fontSize: 12 }}>{to?.name} should receive from {from?.name}</p>
                 </div>
                 <b>{formatMoney(draft.amount, trip.currency)}</b>
               </div>
               <div className="settlementActions">
-                {draft.id ? <Link className="button" href={`/trips/${tripId}/pay/${draft.id}`}><CreditCard size={16} /> Pay</Link> : <button className="button" onClick={() => ensureSaved(draft).then((id) => id && (window.location.href = `/trips/${tripId}/pay/${id}`))} type="button"><CreditCard size={16} /> Pay</button>}
-                <button className="buttonSecondary" onClick={() => markPaid(draft)} type="button">{draft.status === "paid_by_sender" ? <Clock3 size={16} /> : <CheckCircle2 size={16} />} Paid</button>
+                {draft.id
+                  ? <Link className="button" href={`/trips/${tripId}/pay/${draft.id}`}><CreditCard size={16} /> Pay</Link>
+                  : <button className="button" onClick={() => ensureSaved(draft).then((id) => id && (window.location.href = `/trips/${tripId}/pay/${id}`))} type="button"><CreditCard size={16} /> Pay</button>
+                }
+                <button className="buttonSecondary" onClick={() => markPaid(draft)} type="button">
+                  {draft.status === "paid_by_sender" ? <Clock3 size={16} /> : <CheckCircle2 size={16} />} Paid
+                </button>
               </div>
             </article>
           );
-        }) : <div className="card empty"><div><h2>You are all settled</h2><p className="muted">No payments are needed.</p></div></div>}
+        }) : (
+          <div className="card empty">
+            <div><h2>You are all settled</h2><p className="muted">No payments are needed.</p></div>
+          </div>
+        )}
       </div>
     </AppShell>
   );

@@ -49,6 +49,7 @@ export function ExpenseListPage({ tripId }: { tripId: string }) {
   }
 
   if (!trip) return <AppShell tripId={tripId}><LoadingCard label="Loading expenses" /></AppShell>;
+
   const availableCategories = Array.from(new Set(expenses.map((expense) => expense.category))).filter(Boolean);
   const categories = ["All", ...availableCategories];
   const filteredExpenses = selectedCategory === "All" ? expenses : expenses.filter((expense) => expense.category === selectedCategory);
@@ -57,10 +58,16 @@ export function ExpenseListPage({ tripId }: { tripId: string }) {
   return (
     <AppShell tripId={tripId}>
       <section className="sectionHead">
-        <div><p className="kicker">Expenses</p><h1>All expenses</h1><p className="muted">Every shared trip cost in one clean list.</p></div>
+        <div>
+          <p className="kicker">Expenses</p>
+          <h1>All expenses</h1>
+          <p className="muted">Every shared trip cost in one clean list.</p>
+        </div>
         <Link className="button" href={`/trips/${tripId}/expenses/new`}><Plus size={16} /> Add Expense</Link>
       </section>
-      <section className="expenseFilterPanel">
+
+      {/* Filter panel */}
+      <div className="expenseFilterPanel">
         <div>
           <p className="muted">{selectedCategory === "All" ? "Showing every category" : `Showing ${selectedCategory} expenses`}</p>
           <b>{formatMoney(filteredTotal, trip.currency)}</b>
@@ -78,7 +85,8 @@ export function ExpenseListPage({ tripId }: { tripId: string }) {
             );
           })}
         </div>
-      </section>
+      </div>
+
       <div className="recentExpenseRows">
         {filteredExpenses.length ? filteredExpenses.map((expense) => {
           const payer = members.find((member) => member.id === expense.paid_by_member_id);
@@ -96,7 +104,14 @@ export function ExpenseListPage({ tripId }: { tripId: string }) {
               </span>
             </Link>
           );
-        }) : <div className="card empty"><div><h3>No expenses found</h3><p className="muted">{selectedCategory === "All" ? "Add your first trip expense." : `No ${selectedCategory} expenses yet.`}</p></div></div>}
+        }) : (
+          <div className="card empty">
+            <div>
+              <h3>No expenses found</h3>
+              <p className="muted">{selectedCategory === "All" ? "Add your first trip expense." : `No ${selectedCategory} expenses yet.`}</p>
+            </div>
+          </div>
+        )}
       </div>
     </AppShell>
   );

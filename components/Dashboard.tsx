@@ -121,13 +121,13 @@ export function Dashboard() {
 
       {message ? <p className="badge paid">{message}</p> : null}
 
-      <div className="grid">
+      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
         {loading ? <LoadingCard label="Loading trips" /> : null}
         {!loading && !trips.length ? (
           <div className="card empty">
             <div>
               <h2>Create your first trip</h2>
-              <p className="muted">Start with a trip name, destination, currency, and invite link.</p>
+              <p className="muted" style={{ marginBottom: 16 }}>Start with a trip name, destination, currency, and invite link.</p>
               <Link className="button" href="/trips/new">Create trip</Link>
             </div>
           </div>
@@ -142,11 +142,11 @@ export function Dashboard() {
                   <Link className="tripListOpen" href={`/trips/${trip.id}`}>
                     <div className="tripThumb">{trip.destination?.slice(0, 2).toUpperCase() || "TS"}</div>
                     <div>
-                      <h3>{trip.name}</h3>
-                      <p className="muted">{trip.destination || "No destination"} · {trip.currency}</p>
+                      <h3 style={{ marginBottom: 2, fontSize: 16 }}>{trip.name}</h3>
+                      <p className="muted" style={{ fontSize: 13 }}>{trip.destination || "No destination"} · {trip.currency}</p>
                     </div>
                   </Link>
-                  <div className={`tripListActions ${canManage ? "" : "single"}`}>
+                  <div className="tripListActions">
                     {canManage ? (
                       <>
                         <button className="iconButton" onClick={() => setEditingTripId(isEditing ? "" : trip.id)} type="button" aria-label={`Edit ${trip.name}`}>

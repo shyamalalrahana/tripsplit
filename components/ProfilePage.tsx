@@ -83,7 +83,7 @@ export function ProfilePage() {
 
   return (
     <AppShell>
-      <section className="profileCard grid">
+      <section className="profileCard">
         <div>
           <p className="kicker">Profile</p>
           <h2>Your payment profile</h2>
@@ -92,7 +92,12 @@ export function ProfilePage() {
         {profile ? (
           <form className="profileForm" onSubmit={save}>
             <div className="profilePhotoPanel">
-              <AvatarView className="profilePhotoLarge" name={profile.name} color={profile.avatar_color} image={avatarPreview || profile.avatar_url} />
+              <AvatarView
+                className="profilePhotoLarge"
+                name={profile.name}
+                color={profile.avatar_color}
+                image={avatarPreview || profile.avatar_url}
+              />
               <div>
                 <h3>{profile.name}</h3>
                 <p className="muted">Upload a clear photo so friends can recognize you in trip groups.</p>

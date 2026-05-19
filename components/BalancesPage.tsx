@@ -42,17 +42,28 @@ export function BalancesPage({ tripId }: { tripId: string }) {
   return (
     <AppShell tripId={tripId}>
       <section className="sectionHead">
-        <div><p className="kicker">Balances</p><h1>Who owes what</h1><p className="muted">Positive means receive money. Negative means pay money.</p></div>
+        <div>
+          <p className="kicker">Balances</p>
+          <h1>Who owes what</h1>
+          <p className="muted">Positive means receive money. Negative means pay money.</p>
+        </div>
       </section>
       <div className="balanceList">
         {balances.map((item) => (
           <article className="card balanceCard" key={item.member.id}>
             <div className="balanceMain">
               <div className="balancePerson">
-                <AvatarView className="avatar balanceAvatar" name={item.member.name} color={item.member.avatar_color} image={item.member.avatar_url} />
+                <AvatarView
+                  className="avatar balanceAvatar"
+                  name={item.member.name}
+                  color={item.member.avatar_color}
+                  image={item.member.avatar_url}
+                />
                 <div>
-                  <h3>{item.member.name}</h3>
-                  <span className={`badge ${item.balance > 0 ? "receive" : item.balance < 0 ? "owe" : "settled"}`}>{item.balance > 0 ? "Receive" : item.balance < 0 ? "Owes" : "Settled"}</span>
+                  <h3 style={{ marginBottom: 4 }}>{item.member.name}</h3>
+                  <span className={`badge ${item.balance > 0 ? "receive" : item.balance < 0 ? "owe" : "settled"}`}>
+                    {item.balance > 0 ? "Receive" : item.balance < 0 ? "Owes" : "Settled"}
+                  </span>
                 </div>
               </div>
               <strong className={`balanceAmount ${item.balance > 0 ? "positive" : item.balance < 0 ? "negative" : ""}`}>

@@ -63,6 +63,7 @@ export function AppShell({
             width={620}
             height={150}
             priority
+            onError={() => {}}
           />
           <span className="brandFallback">
             <span className="brandTitle">TripSplits</span>
