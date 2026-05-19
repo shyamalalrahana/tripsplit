@@ -69,7 +69,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
-      <body className={plusJakarta.className}>{children}</body>
+      <body className={`${plusJakarta.className} tripsplit-canvas`}>{children}</body>
     </html>
   );
 }
